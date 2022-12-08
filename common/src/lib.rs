@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::io::prelude::*;
 use std::collections::HashSet;
+use std::num::ParseIntError;
 
 pub mod life;
 
@@ -33,7 +34,7 @@ pub fn input() -> Result<Vec<String>, std::io::Error> {
 pub fn input_to_nums(input: &[String]) -> Vec<u32> {
     input
         .iter()
-        .map(|s| { s.parse()} )
+        .map(|s| { s.parse::<u32>().or::<ParseIntError>(Ok(0)) } )
         .flatten()
         .collect()
 }
