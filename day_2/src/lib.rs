@@ -1,5 +1,3 @@
-use common::*;
-
 pub fn first(input: &[String]) -> i32 {
     let move_pairs = input_to_ascii_val(&input);
 
@@ -15,9 +13,33 @@ pub fn first(input: &[String]) -> i32 {
         })
 }
 
-pub fn second(input: &[String]) -> u32 {
-    let input = input_to_nums(input);
-    return 0;
+pub fn second(input: &[String]) -> i32 {
+    let move_pairs = input_to_ascii_val(input);
+
+    move_pairs.iter().fold(
+        0i32,
+        |total_score, (their_move, my_directive)| {
+            let outcome_score = (my_directive - 1) * 3;
+
+            let play_score = match my_directive {
+                // lose
+                1 => match their_move { // TODO formula for this gr
+                    1 => 3,
+                    2 => 1, 
+                    _ => 2,
+                }
+                // draw
+                2 => *their_move,
+                // win
+                _ => match their_move { // TODO formula for this gr
+                    1 => 2,
+                    2 => 3,
+                    _ => 1,
+                }
+            };
+            total_score + outcome_score + play_score
+        }
+    )
 }
 
 fn input_to_ascii_val(input: &[String]) -> Vec<(i32, i32)> {
@@ -92,6 +114,6 @@ mod tests {
     fn second_test() {
         let input = example();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 12);
     }
 }
