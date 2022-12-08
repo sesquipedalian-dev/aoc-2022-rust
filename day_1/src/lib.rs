@@ -3,34 +3,29 @@ use common::*;
 pub fn first(input: &[String]) -> u32 {
     let input = input_to_nums(input);
 
-    let (_, max_cals) = input.iter().fold(
-        (0, 0),
-        |(cur_cals, max_cals), item|  {
-            match item {
-                // new elf
-                0 if cur_cals > max_cals => (0, cur_cals),
-                0 => (0, max_cals),
-                // accumulate weight in current elf
-                _ => (cur_cals + item, max_cals)
-            }
+    let (_, max_cals) = input.iter().fold((0, 0), |(cur_cals, max_cals), item| {
+        match item {
+            // new elf
+            0 if cur_cals > max_cals => (0, cur_cals),
+            0 => (0, max_cals),
+            // accumulate weight in current elf
+            _ => (cur_cals + item, max_cals),
         }
-    );
+    });
 
     return max_cals;
 }
 
-
-
 pub fn second(input: &[String]) -> u32 {
     let input = input_to_nums(input);
 
-    let (_, max_cals) = input.iter().fold(
-        (0, (vec!(0, 0, 0))),
-        |(cur_cals, max_cals), item|  {
+    let (_, max_cals) = input
+        .iter()
+        .fold((0, (vec![0, 0, 0])), |(cur_cals, max_cals), item| {
             match item {
                 // new elf
                 0 => {
-                    let mut new_max: Vec<u32> = vec!();
+                    let mut new_max: Vec<u32> = vec![];
                     let mut i = 0;
                     let mut fill_mode = false;
                     while new_max.len() < 3 && i < 3 {
@@ -41,16 +36,15 @@ pub fn second(input: &[String]) -> u32 {
                         } else {
                             // otherwise grab an entry from the current max_cals
                             new_max.push(max_cals[i]);
-                            i = i+1;
+                            i = i + 1;
                         }
                     }
                     (0, new_max)
-                },
+                }
                 // accumulate weight in current elf
-                _ => (cur_cals + item, max_cals)
+                _ => (cur_cals + item, max_cals),
             }
-        }
-    );
+        });
 
     return max_cals.iter().fold(0, |cur, next| cur + next);
 }
@@ -60,26 +54,11 @@ mod tests {
     use super::*;
 
     fn example() -> Vec<String> {
-        let input: Vec<&str> = vec!(
-            "1000",
-            "2000",
-            "3000",
-            "",
-            "4000",
-            "",
-            "5000",
-            "6000",
-            "",
-            "7000",
-            "8000",
-            "9000",
-            "",
-            "10000",
-            ""
-        );
-        input.iter()
-            .map(|s: &&str| { String::from(*s) })
-            .collect()
+        let input: Vec<&str> = vec![
+            "1000", "2000", "3000", "", "4000", "", "5000", "6000", "", "7000", "8000", "9000", "",
+            "10000", "",
+        ];
+        input.iter().map(|s: &&str| String::from(*s)).collect()
     }
     #[test]
     fn first_test() {
@@ -89,7 +68,7 @@ mod tests {
     }
 
     #[test]
-    fn second_test() { 
+    fn second_test() {
         let input = example();
         let result = second(&input);
         assert_eq!(result, 45000);
