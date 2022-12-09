@@ -3,12 +3,19 @@ pub fn first(input: &[String]) -> usize {
     let matching_prioritites = compartments.iter().filter_map(|(first, second)| {
         (1..=52).find(|priority| first.count(*priority) > 0 && second.count(*priority) > 0)
     });
-    // println!("matching prioritities: {:?}", matching_prioritites);
     matching_prioritites.reduce(|lhs, rhs| lhs + rhs).unwrap()
 }
 
-pub fn second(input: &[String]) -> i32 {
-    0
+pub fn second(input: &[String]) -> usize {
+    let compartments = compartments_from_input(input);
+    let matching_priorities = compartments.chunks(3).filter_map(|group| {
+        (1..=52).find(|priority| {
+            group.iter().fold(true, |accum, (first_half, second_half)| {
+                accum && (first_half.count(*priority) > 0 || second_half.count(*priority) > 0)
+            })
+        })
+    });
+    matching_priorities.reduce(|lhs, rhs| lhs + rhs).unwrap()
 }
 
 fn compartments_from_input(input: &[String]) -> Vec<(Compartment, Compartment)> {
@@ -130,6 +137,6 @@ mod tests {
     fn second_test() {
         let input = example();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 70);
     }
 }
