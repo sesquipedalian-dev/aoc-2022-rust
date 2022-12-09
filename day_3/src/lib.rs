@@ -12,46 +12,51 @@ pub fn second(input: &[String]) -> i32 {
 }
 
 fn compartments_from_input(input: &[String]) -> Vec<(Compartment, Compartment)> {
-    input.iter().filter_map(|line| {
-        let len = line.len();
-        if (len < 2) || ((len % 2) != 0) {
-            return None
-        }
+    input
+        .iter()
+        .filter_map(|line| {
+            let len = line.len();
+            if (len < 2) || ((len % 2) != 0) {
+                return None;
+            }
 
-        let part1: String = line.chars().take(len / 2).collect();
-        let compartment1 = Compartment::from(&part1);
+            let part1: String = line.chars().take(len / 2).collect();
+            let compartment1 = Compartment::from(&part1);
 
-        let part2: String = line.chars().skip(len / 2).collect();
-        let compartment2 = Compartment::from(&part2);
+            let part2: String = line.chars().skip(len / 2).collect();
+            let compartment2 = Compartment::from(&part2);
 
-        Some((compartment1, compartment2))
-    }).collect()
+            Some((compartment1, compartment2))
+        })
+        .collect()
 }
 
 #[derive(Debug, PartialEq, Hash, Clone, Eq)]
 struct Compartment {
-    items: Vec<usize>
+    items: Vec<usize>,
 }
 
 fn ascii_to_priority(ascii: char) -> usize {
     let ascii = (ascii as usize) - 64; // A to Z to 1 - 26
-    if ascii < 27 { // A-Z need to be moved to 27-52
+    if ascii < 27 {
+        // A-Z need to be moved to 27-52
         ascii + 26
-    } else { // a-z need to moved down to 1-27
+    } else {
+        // a-z need to moved down to 1-27
         ascii - 32 // A-Z + 6 additional characters
     }
 }
 
 impl Compartment {
     fn new() -> Compartment {
-        Compartment{
-            items: vec![0; 52],
-        }
+        Compartment { items: vec![0; 52] }
     }
 
     fn from(input: &String) -> Compartment {
         let mut compartment = Compartment::new();
-        input.chars().for_each(|c| compartment.add(ascii_to_priority(c)));
+        input
+            .chars()
+            .for_each(|c| compartment.add(ascii_to_priority(c)));
         compartment
     }
 
