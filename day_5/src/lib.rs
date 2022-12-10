@@ -17,8 +17,24 @@ pub fn first(input: &[String]) -> String {
         .collect()
 }
 
-pub fn second(input: &[String]) -> usize {
-    0
+pub fn second(input: &[String]) -> String {
+    let mut input_iter = input.iter();
+    let mut stacks = CargoStacks::from(&mut input_iter);
+    let moves = Move::from(&mut input_iter);
+
+    moves.iter().for_each(|m| {
+        let remove_index = stacks.stacks[m.from - 1].len() - m.count;
+        (0..m.count).for_each(|i| {
+            let moved = stacks.stacks[m.from - 1].remove(remove_index);
+            stacks.stacks[m.to - 1].push(moved);
+        })
+    });
+
+    stacks
+        .stacks
+        .iter_mut()
+        .filter_map(|stack| stack.pop())
+        .collect()
 }
 
 #[derive(Debug, PartialEq, Hash, Clone, Eq)]
@@ -154,6 +170,6 @@ mod tests {
     fn second_test() {
         let input = example();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, String::from("MCD"));
     }
 }
