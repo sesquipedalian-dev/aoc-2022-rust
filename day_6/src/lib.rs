@@ -1,10 +1,18 @@
 pub fn first(input: &[String]) -> usize {
-    let mut i = 3; // start at 4th char so we have enough entries
+    find_string_of_distinct_characters(input, 4)
+}
+
+pub fn second(input: &[String]) -> usize {
+    find_string_of_distinct_characters(input, 14)
+}
+
+fn find_string_of_distinct_characters(input: &[String], string_size: usize) -> usize {
+    let mut i = string_size - 1; // start at 4th char so we have enough entries
     let input_chars: Vec<char> = input[0].chars().collect();
     while i < input_chars.len() {
         if input_chars
             .iter()
-            .zip(i - 3..i)
+            .zip((i - (string_size - 1))..i)
             .fold(true, |accum, (_, j)| {
                 accum
                     && ((j + 1)..=i)
@@ -18,10 +26,6 @@ pub fn first(input: &[String]) -> usize {
     }
 
     i + 1
-}
-
-pub fn second(input: &[String]) -> usize {
-    0
 }
 
 #[cfg(test)]
@@ -54,10 +58,10 @@ mod tests {
     fn second_test() {
         let input = examples();
         let mut results = input.chunks(1).map(|slice| second(&slice));
-        assert_eq!(results.next(), Some(0));
-        assert_eq!(results.next(), Some(0));
-        assert_eq!(results.next(), Some(0));
-        assert_eq!(results.next(), Some(0));
-        assert_eq!(results.next(), Some(0));
+        assert_eq!(results.next(), Some(19));
+        assert_eq!(results.next(), Some(23));
+        assert_eq!(results.next(), Some(23));
+        assert_eq!(results.next(), Some(29));
+        assert_eq!(results.next(), Some(26));
     }
 }
