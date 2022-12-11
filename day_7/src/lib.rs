@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 pub fn first(input: &[String]) -> usize {
     let dir_sizes = compute_dir_sizes(input);
-    println!("dir sizes {:?}", dir_sizes);
 
     let mut sum_of_smaller_dirs: usize = 0;
     for (_, size) in dir_sizes.iter() {
@@ -15,7 +14,6 @@ pub fn first(input: &[String]) -> usize {
 
 pub fn second(input: &[String]) -> usize {
     let dir_sizes = compute_dir_sizes(input);
-    println!("dir sizes {:?}", dir_sizes);
 
     let current_used_space = dir_sizes.get(&String::from("/")).unwrap();
     let current_unused_space = 70_000_000 - current_used_space;
