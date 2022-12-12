@@ -16,30 +16,31 @@ pub fn first(input: &[String]) -> i32 {
 pub fn second(input: &[String]) -> i32 {
     let move_pairs = input_to_ascii_val(input);
 
-    move_pairs.iter().fold(
-        0i32,
-        |total_score, (their_move, my_directive)| {
+    move_pairs
+        .iter()
+        .fold(0i32, |total_score, (their_move, my_directive)| {
             let outcome_score = (my_directive - 1) * 3;
 
             let play_score = match my_directive {
                 // lose
-                1 => match their_move { // TODO formula for this gr
+                1 => match their_move {
+                    // TODO formula for this gr
                     1 => 3,
-                    2 => 1, 
+                    2 => 1,
                     _ => 2,
-                }
+                },
                 // draw
                 2 => *their_move,
                 // win
-                _ => match their_move { // TODO formula for this gr
+                _ => match their_move {
+                    // TODO formula for this gr
                     1 => 2,
                     2 => 3,
                     _ => 1,
-                }
+                },
             };
             total_score + outcome_score + play_score
-        }
-    )
+        })
 }
 
 fn input_to_ascii_val(input: &[String]) -> Vec<(i32, i32)> {
@@ -70,16 +71,7 @@ mod tests {
 
     fn all_pairs() -> Vec<String> {
         let input: Vec<&str> = vec![
-            "A X",
-            "A Y", 
-            "A Z",
-            "B X",
-            "B Y",
-            "B Z",
-            "C X",
-            "C Y",
-            "C Z",
-            ""
+            "A X", "A Y", "A Z", "B X", "B Y", "B Z", "C X", "C Y", "C Z", "",
         ];
 
         input.iter().map(|s: &&str| String::from(*s)).collect()
