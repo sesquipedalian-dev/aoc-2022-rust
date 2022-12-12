@@ -71,7 +71,55 @@ pub fn first(input: &[String]) -> usize {
 }
 
 pub fn second(input: &[String]) -> usize {
-    0
+    let (_, mut grid) = parse_input(input);
+    let max_i = grid.len() - 1;
+    let mut max_scenic_score = 0;
+
+    // brute force it
+
+    for (y, row) in grid.iter().enumerate() {
+        if y == 0 || y == max_i {
+            continue; // all edges have a score of 0
+        }
+
+        for (x, item) in row.iter().enumerate() {
+            if x == 0 || x == max_i {
+                continue; // all edges have a score of 0
+            }
+
+            // count left
+            let left_count = (0..x)
+                .rev()
+                .find(|cmp_x| grid[y][*cmp_x].height >= item.height)
+                .map(|cmp_x| x - cmp_x)
+                .unwrap_or(x);
+            // count right
+            let right_count = ((x + 1)..=max_i)
+                .find(|cmp_x| grid[y][*cmp_x].height >= item.height)
+                .map(|cmp_x| cmp_x - x)
+                .unwrap_or(max_i - x);
+            // count down
+            let down_count = ((y + 1)..=max_i)
+                .find(|cmp_y| grid[*cmp_y][x].height >= item.height)
+                .map(|cmp_y| cmp_y - y)
+                .unwrap_or(max_i - y);
+            // count up
+            let up_count = (0..y)
+                .rev()
+                .find(|cmp_y| grid[*cmp_y][x].height >= item.height)
+                .map(|cmp_y| y - cmp_y)
+                .unwrap_or(y);
+
+            // multiply together
+            let scenic_score = left_count * right_count * down_count * up_count;
+
+            if scenic_score > max_scenic_score {
+                max_scenic_score = scenic_score
+            }
+        }
+    }
+
+    max_scenic_score
 }
 
 fn parse_input(input: &[String]) -> (usize, Vec<Vec<GridItem>>) {
@@ -139,6 +187,6 @@ mod tests {
     fn second_test() {
         let input = example();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 8);
     }
 }
