@@ -5,7 +5,7 @@ pub fn first(input: &[String]) -> usize {
         monkeys.push(monkey);
     }
 
-    for round in 0..20 {
+    for _ in 0..20 {
         let max_monkey = monkeys.len();
         for monkey_index in 0..max_monkey {
             while let Some(item) = monkeys[monkey_index].items.pop() {
@@ -34,7 +34,45 @@ pub fn first(input: &[String]) -> usize {
 }
 
 pub fn second(input: &[String]) -> usize {
-    0
+    let mut input_iter = input.iter();
+    let mut monkeys: Vec<Monkey> = vec![];
+    while let Some(monkey) = Monkey::from(&mut input_iter) {
+        monkeys.push(monkey);
+    }
+
+    let a_common_divisor = monkeys
+        .iter()
+        .fold(1, |accum, monkey| accum * monkey.divisor);
+
+    for round in 0..10_000 {
+        let max_monkey = monkeys.len();
+        for monkey_index in 0..max_monkey {
+            while let Some(item) = monkeys[monkey_index].items.pop() {
+                let adjusted = monkeys[monkey_index]
+                    .adjustment
+                    .adjust_with_modulus(item, a_common_divisor);
+                let divisible = adjusted % monkeys[monkey_index].divisor == 0;
+                let target = if divisible {
+                    monkeys[monkey_index].true_target
+                } else {
+                    monkeys[monkey_index].false_target
+                };
+
+                monkeys[target].items.push(adjusted);
+                monkeys[monkey_index].inspection_count += 1;
+            }
+        }
+
+        println!("round {}", round);
+        for monkey in monkeys.iter() {
+            monkey.print()
+        }
+        println!();
+    }
+
+    // find biggest monkeys
+    monkeys.sort_by(|a, b| a.inspection_count.partial_cmp(&b.inspection_count).unwrap());
+    monkeys[monkeys.len() - 1].inspection_count * monkeys[monkeys.len() - 2].inspection_count
 }
 
 #[derive(Default)]
@@ -68,7 +106,7 @@ impl Monkey {
 
             match index {
                 1 => {
-                    let mut parts = line.split_whitespace();
+                    let parts = line.split_whitespace();
                     result.items = parts
                         .skip(2)
                         .map(|item| {
@@ -89,15 +127,15 @@ impl Monkey {
                     }
                 }
                 3 => {
-                    let mut parts = line.split_whitespace();
+                    let parts = line.split_whitespace();
                     result.divisor = parts.skip(3).next().unwrap().parse().unwrap();
                 }
                 4 => {
-                    let mut parts = line.split_whitespace();
+                    let parts = line.split_whitespace();
                     result.true_target = parts.skip(5).next().unwrap().parse().unwrap();
                 }
                 5 => {
-                    let mut parts = line.split_whitespace();
+                    let parts = line.split_whitespace();
                     result.false_target = parts.skip(5).next().unwrap().parse().unwrap();
                 }
                 _ => (),
@@ -131,6 +169,11 @@ struct MonkeyWorryAdjustment {
 impl MonkeyWorryAdjustment {
     fn adjust(&self, value: usize) -> usize {
         self.op.adjust(self.lhs.get(value), self.rhs.get(value))
+    }
+
+    fn adjust_with_modulus(&self, value: usize, divisor: usize) -> usize {
+        self.op
+            .adjust_with_modulus(self.lhs.get(value), self.rhs.get(value), divisor)
     }
 
     fn print(&self) {
@@ -172,6 +215,16 @@ impl MonkeyOpOperation {
         match self {
             MonkeyOpOperation::Add => lhs + rhs,
             MonkeyOpOperation::Multiply => lhs * rhs,
+        }
+    }
+
+    fn adjust_with_modulus(&self, lhs: usize, rhs: usize, divisor: usize) -> usize {
+        match self {
+            MonkeyOpOperation::Add => lhs + rhs,
+            MonkeyOpOperation::Multiply => match (lhs * rhs) % divisor {
+                0 => divisor,
+                result => result,
+            },
         }
     }
 
@@ -271,6 +324,6 @@ mod tests {
     fn second_test() {
         let input = example();
         let result = second(&input);
-        assert_eq!(0, 0);
+        assert_eq!(result, 2713310158);
     }
 }

@@ -6,6 +6,6 @@ fn main() -> Result<(), Error> {
     println!("Using puzzle input {:?}", input);
 
     println!("First output: {}", first(&input));
-    second(&input);
+    println!("Second output: {}", second(&input));
     Ok(())
 }
