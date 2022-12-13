@@ -31,8 +31,45 @@ pub fn first(input: &[String]) -> isize {
     accum
 }
 
-pub fn second(input: &[String]) -> usize {
-    0
+pub fn second(input: &[String]) -> () {
+    let mut x: isize = 1;
+    let mut cycle = 1;
+    let mut input_iter = input.iter();
+    let max_cycle = 240;
+    let mut next_add: isize = 0;
+    // note: no max cycle because input includes enough noops() to handle the last adds
+
+    println!();
+    println!();
+
+    while cycle <= max_cycle {
+        // check if 'sprite' intersects with pixel
+        let crt_position = (cycle - 1) % 40;
+        if x - 1 <= crt_position && crt_position <= x + 1 {
+            print!("#");
+        } else {
+            print!(".");
+        }
+        if cycle % 40 == 0 {
+            println!();
+        }
+
+        // parse the current line
+        if next_add != 0 {
+            x += next_add;
+            next_add = 0;
+        } else if let Some(Some(add_amount)) =
+            input_iter.next().map(|line| line.strip_prefix("addx "))
+        {
+            let add_amount: isize = add_amount.parse().unwrap();
+            next_add = add_amount;
+        } // noop line - don't do anything
+
+        cycle += 1;
+    }
+
+    println!();
+    println!();
 }
 
 #[cfg(test)]
@@ -80,8 +117,8 @@ mod tests {
 
     #[test]
     fn second_test() {
-        let input = example();
+        let input = example2();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(0, 0);
     }
 }
