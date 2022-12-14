@@ -27,7 +27,49 @@ pub fn first(input: &[String]) -> usize {
 }
 
 pub fn second(input: &[String]) -> usize {
-    0
+    // flatten the pairs into a flat list of packets items with lists
+    let mut pairs = parse_input(&input);
+    let mut packets: Vec<PacketItem> = vec!();
+    for (item1, item2) in pairs.iter_mut() {
+        let mut item1_list = vec![];
+        item1_list.append(item1);
+        let item1 = PacketItem {
+            integer: None,
+            list: Some(item1_list),
+        };
+        packets.push(item1);
+
+        let mut item2_list = vec![];
+        item2_list.append(item2);
+        let item2 = PacketItem {
+            integer: None,
+            list: Some(item2_list),
+        };
+        packets.push(item2);
+    }
+
+    // add [[6]] and [[2]]
+    packets.push(PacketItem{integer: None, list: Some(vec!(PacketItem{integer: Some(2), list: None}))});
+    packets.push(PacketItem{integer: None, list: Some(vec!(PacketItem{integer: Some(6), list: None}))});
+
+    // sort using our compare function
+    packets.sort_by(|a, b| {
+        match in_right_order((&a, &b)) {
+            InRightOrder::RightOrder => std::cmp::Ordering::Less,
+            InRightOrder::Unknown => std::cmp::Ordering::Equal,
+            InRightOrder::WrongOrder => std::cmp::Ordering::Greater,
+        }
+    });
+    
+    // find index of [[2]] and [[6]] and multiply them
+    packets.iter().enumerate().filter(|(_, item)| {
+        item.list.as_ref().filter(|first_list| {
+                first_list.len() == 1 && first_list[0].integer.filter(|v| *v == 2 || *v == 6).is_some()
+            }).is_some()
+    })
+    .map(|(index, _)| index + 1)
+    .reduce(|a, b| a * b)
+    .unwrap_or_default()
 }
 
 #[derive(Debug, PartialEq, Eq, Hash)]
@@ -38,7 +80,6 @@ enum InRightOrder {
 }
 
 fn in_right_order(pair: (&PacketItem, &PacketItem)) -> InRightOrder {
-    println!("in_right_order comparing {:?}", pair);
     match pair {
         // two ints
         (
@@ -292,6 +333,6 @@ mod tests {
     fn second_test() {
         let input = example();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 140);
     }
 }
