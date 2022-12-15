@@ -5,7 +5,7 @@ pub fn first(input: &[String]) -> usize {
     let mut generation = 0;
 
     loop {
-        let mut sand_iter = SandIter::new(&rock_coords, max_y);
+        let mut sand_iter = SandIter::new(&rock_coords, PartMaxY::Part1(max_y));
         let mut last_sand_move_result = SandMoveResult::NeverAtRest;
         loop {
             last_sand_move_result = sand_iter.try_move();
@@ -33,7 +33,36 @@ pub fn first(input: &[String]) -> usize {
 }
 
 pub fn second(input: &[String]) -> usize {
-    0
+    let (mut rock_coords, max_y) = parse_input(&input);
+    let mut generation = 0;
+
+    loop {
+        let mut sand_iter = SandIter::new(&rock_coords, PartMaxY::Part2(max_y + 2));
+        let mut last_sand_move_result = SandMoveResult::NeverAtRest;
+        loop {
+            last_sand_move_result = sand_iter.try_move();
+            if let SandMoveResult::Moving(_) = last_sand_move_result {
+            } else {
+                break;
+            }
+        }
+
+        generation += 1;
+
+        match last_sand_move_result {
+            SandMoveResult::AtRest(coord) => {
+                if coord == Coord(500, 0) {
+                    break;
+                }
+                rock_coords.insert(coord);
+            }
+            o => {
+                panic!("unexpected move result! {:?}", o);
+            } // never happens
+        }
+    }
+
+    generation
 }
 
 #[derive(Debug)]
@@ -43,14 +72,20 @@ enum SandMoveResult {
     Moving(Coord),
 }
 
+#[derive(PartialEq, Eq)]
+enum PartMaxY {
+    Part1(usize),
+    Part2(usize),
+}
+
 struct SandIter<'a> {
     rock_coords: &'a HashSet<Coord>,
-    max_y: usize,
+    max_y: PartMaxY,
     current_location: Coord,
 }
 
 impl<'a> SandIter<'a> {
-    fn new(rock_coords: &HashSet<Coord>, max_y: usize) -> SandIter {
+    fn new(rock_coords: &HashSet<Coord>, max_y: PartMaxY) -> SandIter {
         SandIter {
             rock_coords,
             current_location: Coord(500, 0),
@@ -59,33 +94,29 @@ impl<'a> SandIter<'a> {
     }
 
     fn try_move(&mut self) -> SandMoveResult {
-        if self.current_location.1 >= self.max_y {
-            return SandMoveResult::NeverAtRest;
+        if let PartMaxY::Part1(max_y) = self.max_y {
+            if self.current_location.1 >= max_y {
+                return SandMoveResult::NeverAtRest;
+            }
         }
 
-        // first try straight down
-        let new_coord = Coord(self.current_location.0, self.current_location.1 + 1);
-        if !self.rock_coords.contains(&new_coord) {
-            self.current_location = new_coord;
-            return SandMoveResult::Moving(new_coord);
-        }
+        let potential_directions = vec![
+            Coord(self.current_location.0, self.current_location.1 + 1),
+            Coord(self.current_location.0 - 1, self.current_location.1 + 1),
+            Coord(self.current_location.0 + 1, self.current_location.1 + 1),
+        ];
 
-        // then try to fall down and left
-        let new_coord = Coord(self.current_location.0 - 1, self.current_location.1 + 1);
-        if !self.rock_coords.contains(&new_coord) {
-            self.current_location = new_coord;
-            return SandMoveResult::Moving(new_coord);
-        }
-
-        // then try to fall down and right
-        let new_coord = Coord(self.current_location.0 + 1, self.current_location.1 + 1);
-        if !self.rock_coords.contains(&new_coord) {
-            self.current_location = new_coord;
-            return SandMoveResult::Moving(new_coord);
-        }
-
-        // otherwise we are at rest
-        SandMoveResult::AtRest(self.current_location)
+        potential_directions
+            .iter()
+            .find(|direction| {
+                !(self.rock_coords.contains(direction)
+                    || self.max_y == PartMaxY::Part2(direction.1))
+            })
+            .map(|found_direction| {
+                self.current_location = *found_direction;
+                SandMoveResult::Moving(*found_direction)
+            })
+            .unwrap_or(SandMoveResult::AtRest(self.current_location))
     }
 }
 
@@ -170,6 +201,6 @@ mod tests {
     fn second_test() {
         let input = example();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 93);
     }
 }
