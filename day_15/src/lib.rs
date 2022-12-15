@@ -4,26 +4,33 @@ pub fn first(input: &[String], target_y: isize) -> usize {
 
     // determine its footprint on the y = whatever row
     //   for a sensor at x, y, it's footprint is centered at x, whatever on the target row and the width is max(0, 1 + (range - (whatever - y).abs()) * 2)
-    let mut ranges: Vec<(isize, isize)> = sensors.iter().flat_map(|sensor| {
-        let width_on_y = (sensor.sensing_distance as isize) - (target_y - sensor.location.y).abs();
-        if width_on_y < 0 { 
-            None
-        }
-        else {
-            Some((sensor.location.x - width_on_y, sensor.location.x + width_on_y))
-        }
-    }).collect();
+    let mut ranges: Vec<(isize, isize)> = sensors
+        .iter()
+        .flat_map(|sensor| {
+            let width_on_y =
+                (sensor.sensing_distance as isize) - (target_y - sensor.location.y).abs();
+            if width_on_y < 0 {
+                None
+            } else {
+                Some((
+                    sensor.location.x - width_on_y,
+                    sensor.location.x + width_on_y,
+                ))
+            }
+        })
+        .collect();
 
     // sort ranges by min x
     ranges.sort_by(|a, b| a.0.cmp(&b.0));
 
     // combine overlapping ranges like in the day 4 puzzle
     let first_range = ranges.remove(0);
-    let mut combined_ranges: Vec<(isize, isize)> = vec!(first_range);
+    let mut combined_ranges: Vec<(isize, isize)> = vec![first_range];
     for next_range in ranges {
         let mut current_range = combined_ranges.pop().unwrap();
-        if (current_range.0 <= next_range.0 && current_range.1 >= next_range.0) ||
-           ( current_range.0 <= next_range.1 && current_range.1 >= next_range.0) {
+        if (current_range.0 <= next_range.0 && current_range.1 >= next_range.0)
+            || (current_range.0 <= next_range.1 && current_range.1 >= next_range.0)
+        {
             // overlap
             current_range.0 = current_range.0.min(next_range.0);
             current_range.1 = current_range.1.max(next_range.1);
@@ -34,9 +41,11 @@ pub fn first(input: &[String], target_y: isize) -> usize {
             combined_ranges.push(next_range);
         }
     }
-    
+
     // sum the width of the ranges
-    combined_ranges.iter().fold(0isize, |accum, next| { accum + (next.1 - next.0)}) as usize
+    combined_ranges
+        .iter()
+        .fold(0isize, |accum, next| accum + (next.1 - next.0)) as usize
 }
 
 pub fn second(input: &[String]) -> usize {
