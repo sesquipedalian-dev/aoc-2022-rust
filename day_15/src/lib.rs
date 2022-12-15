@@ -30,6 +30,7 @@ pub fn first(input: &[String], target_y: isize) -> usize {
         let mut current_range = combined_ranges.pop().unwrap();
         if (current_range.0 <= next_range.0 && current_range.1 >= next_range.0)
             || (current_range.0 <= next_range.1 && current_range.1 >= next_range.0)
+            || (current_range.1 + 1 == next_range.0)
         {
             // overlap
             current_range.0 = current_range.0.min(next_range.0);
@@ -48,8 +49,71 @@ pub fn first(input: &[String], target_y: isize) -> usize {
         .fold(0isize, |accum, next| accum + (next.1 - next.0)) as usize
 }
 
-pub fn second(input: &[String]) -> usize {
-    0
+pub fn second(input: &[String], max_x_y: isize) -> usize {
+    // let max_x_y = 4_000_000;
+
+    // for each sensor, calculate its sensing distance
+    let sensors = parse_input(&input);
+
+    // iterate row from 0 4_000_000
+    let mut found: Option<(isize, isize)> = None;
+    'target_y: for target_y in 0..=max_x_y {
+        // determine its footprint on the y = target row
+        // same as part 1 but clamp ranges to 0 - 4_000_000
+        let mut ranges: Vec<(isize, isize)> = sensors
+            .iter()
+            .flat_map(|sensor| {
+                let width_on_y =
+                    (sensor.sensing_distance as isize) - (target_y - sensor.location.y).abs();
+                if width_on_y < 0 {
+                    None
+                } else {
+                    let min_x = (sensor.location.x - width_on_y).max(0);
+                    let max_x = (sensor.location.x + width_on_y).min(max_x_y);
+
+                    if (max_x - min_x) < 1 {
+                        None
+                    } else {
+                        Some((min_x, max_x))
+                    }
+                }
+            })
+            .collect();
+
+        // sort ranges by min x
+        ranges.sort_by(|a, b| a.0.cmp(&b.0));
+
+        if ranges.is_empty() {
+            continue;
+        }
+
+        // combine overlapping ranges like in the day 4 puzzle
+        // if we find any range that is NOT overlapping, the beacon is in between the current range and the start of the next range
+        let first_range = ranges.remove(0);
+        let mut combined_ranges: Vec<(isize, isize)> = vec![first_range];
+        for next_range in ranges {
+            let mut current_range = combined_ranges.pop().unwrap();
+            if (current_range.0 <= next_range.0 && current_range.1 >= next_range.0)
+                || (current_range.0 <= next_range.1 && current_range.1 >= next_range.0)
+                || (current_range.1 + 1 == next_range.0)
+            {
+                // overlap
+                current_range.0 = current_range.0.min(next_range.0);
+                current_range.1 = current_range.1.max(next_range.1);
+                combined_ranges.push(current_range);
+            } else {
+                // non-overlapping range - since the problem statement says there's only one spot,
+                // the gap between the ranges must only be 1 and so the spot is after the current_range
+                // println!("found non-overlapping range {:?} {:?} {}", current_range, next_range, target_y);
+                found = Some((current_range.1 + 1, target_y));
+                break 'target_y;
+            }
+        }
+    }
+
+    found
+        .map(|(x, y)| ((x * 4_000_000) + y) as usize)
+        .unwrap_or_default()
 }
 
 #[derive(PartialEq, Eq, Hash, Debug)]
@@ -159,7 +223,7 @@ mod tests {
     #[test]
     fn second_test() {
         let input = example();
-        let result = second(&input);
-        assert_eq!(result, 0);
+        let result = second(&input, 20);
+        assert_eq!(result, 56000011);
     }
 }
