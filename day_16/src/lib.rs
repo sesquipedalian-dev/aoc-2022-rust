@@ -77,6 +77,7 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> usize {
             // NO, that's not right because the example uses previously visited nodes to navigate to others
             // so the trick is that the 'cost' doesn't increase if it's a previous
             let mut previouses_current = position;
+            let mut previouses_previous = position;
             let found_previous = loop {
                 let previous = previouses.get(&previouses_current);
                 if previous.is_none() {
@@ -85,7 +86,12 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> usize {
                 if previous.unwrap() == neighbor {
                     break true
                 }
+                let old_current = previouses_current;
                 previouses_current =*previous.unwrap();
+                if previouses_current == previouses_previous {
+                    break false //loop
+                }
+                previouses_previous = old_current;
             };
 
             let next = State {
