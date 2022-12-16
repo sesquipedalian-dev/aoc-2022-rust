@@ -66,6 +66,13 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> usize {
             return cost;
         }
 
+        // no more valves to open, we're done
+        if edges.iter().fold(true, |accum, edge| {
+            accum && (edge.flow_rate == 0 || *distances.get(&edge.position).unwrap() > 0)
+        }) {
+            return cost / (30 - minutes_remaining) * 30;
+        }
+
         // we've gone down a bad path
         if cost < *distances.get(&position).unwrap() {
             continue;
@@ -97,7 +104,7 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> usize {
             let next = State {
                 cost: cost + if(found_previous) { 0 } else {((minutes_remaining - 2) * edges[*neighbor].flow_rate)},
                 position: *neighbor,
-                minutes_remaining: minutes_remaining - 2,
+                minutes_remaining: minutes_remaining - if(found_previous || edges[*neighbor].flow_rate == 0) { 1 } else { 2},
             };
 
             // if we have a better way to get there from here
