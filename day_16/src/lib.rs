@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::collections::BinaryHeap;
 use std::cmp::Ordering;
 use std::cmp::Ord;
+use std::collections::HashSet;
 
 pub fn first(input: &[String], target_y: isize) -> usize {
     djikstras(0, &parse_input(&input))
@@ -11,11 +12,12 @@ pub fn second(input: &[String], max_x_y: isize) -> usize {
     0
 }
 
-#[derive(PartialEq, Hash, Eq, Copy, Clone)]
+#[derive(PartialEq, Eq, Clone)]
 struct State {
     cost: usize, 
     position: usize,
     minutes_remaining: usize,
+    already_flowing: HashSet<usize>,
 }
 
 // The priority queue depends on `Ord`.
@@ -51,18 +53,21 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> usize {
     // distances.insert(start, 0);
     println!("distances {:?}", distances);
 
-    let mut previouses: HashMap<usize, usize> = HashMap::new(); // notate the path taken so we can later calculate the cost? maybe
+    // let mut previouses: HashMap<usize, usize> = HashMap::new(); // notate the path taken so we can later calculate the cost? maybe
 
     let mut unvisited = BinaryHeap::new();
     unvisited.push(State {
         cost: 0,
         position: start,
-        minutes_remaining: 30
+        minutes_remaining: 30,
+        already_flowing: HashSet::new(),
     });
 
-    while let Some(State { cost, position, minutes_remaining }) = unvisited.pop() {
+    while let Some(State { cost, position, minutes_remaining, already_flowing }) = unvisited.pop() {
+        println!("current node {} {} {}", cost, Valve::position_to_alpha(position), minutes_remaining);
         // if we're out of time we're done
         if minutes_remaining == 0 {
+            println!("minutes remaining 0");
             return cost;
         }
 
@@ -70,49 +75,45 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> usize {
         if edges.iter().fold(true, |accum, edge| {
             accum && (edge.flow_rate == 0 || *distances.get(&edge.position).unwrap() > 0)
         }) {
-            return cost / (30 - minutes_remaining) * 30;
+            println!("no more valves to open {}", minutes_remaining);
+            return already_flowing.iter().fold(cost, |accum, next| accum + (edges[*next].flow_rate * minutes_remaining));
         }
 
         // we've gone down a bad path
         if cost < *distances.get(&position).unwrap() {
+            println!("this is a bad path?");
             continue;
         }
 
+        // we have the choice of either moving to a different node, or pausing to turn us on (if it is not in the already flowing set)
+        let cost_increased_by_already_flowing_items = already_flowing.iter().fold(0, |accum, k| {accum + edges[*k].flow_rate});
+        let mut moves_to_consider = vec!((1, already_flowing.clone()));
+        if  !already_flowing.contains(&position) {
+            let mut new_flowing = already_flowing.clone();
+            new_flowing.insert(position);
+            moves_to_consider.push((2, new_flowing));
+        }
+
         // for each neighbor, see if we can find a way with a lower cost going through this node
-        'neighbors: for neighbor in edges[position].neighbors.iter() {
-            // TODO I think this is only valid if the edge hasn't already been visited on this path
-            // NO, that's not right because the example uses previously visited nodes to navigate to others
-            // so the trick is that the 'cost' doesn't increase if it's a previous
-            let mut previouses_current = position;
-            let mut previouses_previous = position;
-            let found_previous = loop {
-                let previous = previouses.get(&previouses_current);
-                if previous.is_none() {
-                    break false
-                }
-                if previous.unwrap() == neighbor {
-                    break true
-                }
-                let old_current = previouses_current;
-                previouses_current =*previous.unwrap();
-                if previouses_current == previouses_previous {
-                    break false //loop
-                }
-                previouses_previous = old_current;
-            };
+        for neighbor in edges[position].neighbors.iter() {
+            for (new_minutes, new_already_flowing) in moves_to_consider.iter() {
+                // let new_minutes = minutes_remaining - new_minutes;
+                let new_cost = cost + (new_minutes * cost_increased_by_already_flowing_items);
 
-            let next = State {
-                cost: cost + if(found_previous) { 0 } else {((minutes_remaining - 2) * edges[*neighbor].flow_rate)},
-                position: *neighbor,
-                minutes_remaining: minutes_remaining - if(found_previous || edges[*neighbor].flow_rate == 0) { 1 } else { 2},
-            };
+                let next = State {
+                    cost: new_cost,
+                    position: *neighbor,
+                    minutes_remaining: minutes_remaining - *new_minutes,
+                    already_flowing: new_already_flowing.clone(),
+                };
 
-            // if we have a better way to get there from here
-            if next.cost >= *distances.get(&neighbor).unwrap() {
-                println!("from {} to {} with cost {}", Valve::position_to_alpha(position), Valve::position_to_alpha(*neighbor), next.cost);
-                unvisited.push(next);
-                distances.insert(*neighbor, next.cost);
-                previouses.insert(*neighbor, position);
+                // if we have a better way to get there from here
+                if new_cost >= *distances.get(&neighbor).unwrap() {
+                    // println!("from {} to {} with cost {} at {}", Valve::position_to_alpha(position), Valve::position_to_alpha(*neighbor), next.cost, next.minutes_remaining);
+                    unvisited.push(next);
+                    distances.insert(*neighbor,new_cost);
+                    // previouses.insert(*neighbor, position);
+                }
             }
         }
     }
