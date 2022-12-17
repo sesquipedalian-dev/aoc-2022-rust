@@ -1,0 +1,3110 @@
+
+running 2 tests
+test tests::second_test ... ok
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 3) to (3, 3)
+Fall down
+should move? true
+move from (3, 3) to (3, 2)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 2) to (3, 1)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 1) to (3, 0)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 0) to (2, 0)
+Fall down
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 4) to (1, 4)
+Fall down
+should move? true
+move from (1, 4) to (1, 3)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 3) to (2, 3)
+Fall down
+should move? true
+move from (2, 3) to (2, 2)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 2) to (1, 2)
+Fall down
+should move? true
+move from (1, 2) to (1, 1)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 1) to (2, 1)
+Fall down
+|...#...|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 7) to (3, 7)
+Fall down
+should move? true
+move from (3, 7) to (3, 6)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 6) to (2, 6)
+Fall down
+should move? true
+move from (2, 6) to (2, 5)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 5) to (1, 5)
+Fall down
+should move? true
+move from (1, 5) to (1, 4)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 4) to (0, 4)
+Fall down
+should move? true
+move from (0, 4) to (0, 3)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+|..#....|
+|..#....|
+|####...|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 9) to (3, 9)
+Fall down
+should move? true
+move from (3, 9) to (3, 8)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 8) to (2, 8)
+Fall down
+should move? true
+move from (2, 8) to (2, 7)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 7) to (3, 7)
+Fall down
+should move? true
+move from (3, 7) to (3, 6)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 6) to (4, 6)
+Fall down
+should move? true
+move from (4, 6) to (4, 5)
+Pushed by Jet! Some('>')
+should move? true
+move from (4, 5) to (5, 5)
+Fall down
+should move? true
+move from (5, 5) to (5, 4)
+Pushed by Jet! Some('<')
+should move? true
+move from (5, 4) to (4, 4)
+Fall down
+should move? true
+move from (4, 4) to (4, 3)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 10) to (1, 10)
+Fall down
+should move? true
+move from (1, 10) to (1, 9)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 9) to (2, 9)
+Fall down
+should move? true
+move from (2, 9) to (2, 8)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 8) to (3, 8)
+Fall down
+should move? true
+move from (3, 8) to (3, 7)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 7) to (4, 7)
+Fall down
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 12) to (1, 12)
+Fall down
+should move? true
+move from (1, 12) to (1, 11)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 11) to (0, 11)
+Fall down
+should move? true
+move from (0, 11) to (0, 10)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 10) to (0, 9)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 9) to (1, 9)
+Fall down
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 13) to (1, 13)
+Fall down
+should move? true
+move from (1, 13) to (1, 12)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 12) to (0, 12)
+Fall down
+should move? true
+move from (0, 12) to (0, 11)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 11) to (0, 10)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 10) to (1, 10)
+Fall down
+|..#....|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 16) to (3, 16)
+Fall down
+should move? true
+move from (3, 16) to (3, 15)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 15) to (2, 15)
+Fall down
+should move? true
+move from (2, 15) to (2, 14)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 14) to (3, 14)
+Fall down
+should move? true
+move from (3, 14) to (3, 13)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 13) to (4, 13)
+Fall down
+should move? true
+move from (4, 13) to (4, 12)
+Pushed by Jet! Some('<')
+should move? true
+move from (4, 12) to (3, 12)
+Fall down
+|.....#.|
+|.....#.|
+|..####.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 18) to (1, 18)
+Fall down
+should move? true
+move from (1, 18) to (1, 17)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 17) to (2, 17)
+Fall down
+should move? true
+move from (2, 17) to (2, 16)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 16) to (3, 16)
+Fall down
+should move? true
+move from (3, 16) to (3, 15)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 15) to (4, 15)
+Fall down
+should move? true
+move from (4, 15) to (4, 14)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (4, 14) to (4, 13)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+|....#..|
+|....#..|
+|....##.|
+|....##.|
+|..####.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 20) to (1, 20)
+Fall down
+should move? true
+move from (1, 20) to (1, 19)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 19) to (0, 19)
+Fall down
+should move? true
+move from (0, 19) to (0, 18)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 18) to (1, 18)
+Fall down
+should move? true
+move from (1, 18) to (1, 17)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 17) to (0, 17)
+Fall down
+should move? true
+move from (0, 17) to (0, 16)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 16) to (1, 16)
+Fall down
+should move? true
+move from (1, 16) to (1, 15)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 15) to (2, 15)
+Fall down
+should move? true
+move from (2, 15) to (2, 14)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 14) to (1, 14)
+Fall down
+should move? true
+move from (1, 14) to (1, 13)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 13) to (0, 13)
+Fall down
+should move? true
+move from (0, 13) to (0, 12)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+|....#..|
+|....#..|
+|....##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 20) to (3, 20)
+Fall down
+should move? true
+move from (3, 20) to (3, 19)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 19) to (3, 18)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 18) to (2, 18)
+Fall down
+should move? true
+move from (2, 18) to (2, 17)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 17) to (3, 17)
+Fall down
+|...####|
+|....#..|
+|....#..|
+|....##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 21) to (3, 21)
+Fall down
+should move? true
+move from (3, 21) to (3, 20)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 20) to (4, 20)
+Fall down
+should move? true
+move from (4, 20) to (4, 19)
+Pushed by Jet! Some('<')
+should move? true
+move from (4, 19) to (3, 19)
+Fall down
+should move? true
+move from (3, 19) to (3, 18)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 18) to (2, 18)
+Fall down
+|...#...|
+|..###..|
+|...#...|
+|...####|
+|....#..|
+|....#..|
+|....##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 24) to (1, 24)
+Fall down
+should move? true
+move from (1, 24) to (1, 23)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 23) to (2, 23)
+Fall down
+should move? true
+move from (2, 23) to (2, 22)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 22) to (3, 22)
+Fall down
+should move? true
+move from (3, 22) to (3, 21)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 21) to (4, 21)
+Fall down
+should move? true
+move from (4, 21) to (4, 20)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|...####|
+|....#..|
+|....#..|
+|....##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 26) to (1, 26)
+Fall down
+should move? true
+move from (1, 26) to (1, 25)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 25) to (0, 25)
+Fall down
+should move? true
+move from (0, 25) to (0, 24)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 24) to (1, 24)
+Fall down
+should move? true
+move from (1, 24) to (1, 23)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 23) to (0, 23)
+Fall down
+should move? true
+move from (0, 23) to (0, 22)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 22) to (0, 21)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 21) to (0, 20)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 20) to (1, 20)
+Fall down
+should move? true
+move from (1, 20) to (1, 19)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (1, 19) to (1, 18)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 18) to (0, 18)
+Fall down
+should move? true
+move from (0, 18) to (0, 17)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 17) to (1, 17)
+Fall down
+should move? true
+move from (1, 17) to (1, 16)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (1, 16) to (1, 15)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 15) to (0, 15)
+Fall down
+should move? true
+move from (0, 15) to (0, 14)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 26) to (3, 26)
+Fall down
+should move? true
+move from (3, 26) to (3, 25)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 25) to (4, 25)
+Fall down
+should move? true
+move from (4, 25) to (4, 24)
+Pushed by Jet! Some('>')
+should move? true
+move from (4, 24) to (5, 24)
+Fall down
+should move? true
+move from (5, 24) to (5, 23)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 28) to (3, 28)
+Fall down
+should move? true
+move from (3, 28) to (3, 27)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 27) to (2, 27)
+Fall down
+should move? true
+move from (2, 27) to (2, 26)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 26) to (1, 26)
+Fall down
+should move? true
+move from (1, 26) to (1, 25)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 25) to (2, 25)
+Fall down
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 29) to (1, 29)
+Fall down
+should move? true
+move from (1, 29) to (1, 28)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 28) to (2, 28)
+Fall down
+should move? true
+move from (2, 28) to (2, 27)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 27) to (3, 27)
+Fall down
+should move? true
+move from (3, 27) to (3, 26)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 26) to (2, 26)
+Fall down
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 32) to (1, 32)
+Fall down
+should move? true
+move from (1, 32) to (1, 31)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 31) to (0, 31)
+Fall down
+should move? true
+move from (0, 31) to (0, 30)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 30) to (1, 30)
+Fall down
+should move? true
+move from (1, 30) to (1, 29)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 29) to (2, 29)
+Fall down
+|....#..|
+|....#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 35) to (1, 35)
+Fall down
+should move? true
+move from (1, 35) to (1, 34)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 34) to (2, 34)
+Fall down
+should move? true
+move from (2, 34) to (2, 33)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 33) to (3, 33)
+Fall down
+should move? true
+move from (3, 33) to (3, 32)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 32) to (4, 32)
+Fall down
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 39) to (1, 39)
+Fall down
+should move? true
+move from (1, 39) to (1, 38)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 38) to (0, 38)
+Fall down
+should move? true
+move from (0, 38) to (0, 37)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 37) to (0, 36)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 36) to (1, 36)
+Fall down
+should move? true
+move from (1, 36) to (1, 35)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 35) to (2, 35)
+Fall down
+should move? true
+move from (2, 35) to (2, 34)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (2, 34) to (2, 33)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 33) to (1, 33)
+Fall down
+should move? true
+move from (1, 33) to (1, 32)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 32) to (0, 32)
+Fall down
+should move? true
+move from (0, 32) to (0, 31)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 31) to (0, 30)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 30) to (1, 30)
+Fall down
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 39) to (1, 39)
+Fall down
+should move? true
+move from (1, 39) to (1, 38)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 38) to (0, 38)
+Fall down
+should move? true
+move from (0, 38) to (0, 37)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 37) to (0, 36)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 36) to (1, 36)
+Fall down
+|.####..|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 40) to (3, 40)
+Fall down
+should move? true
+move from (3, 40) to (3, 39)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 39) to (2, 39)
+Fall down
+should move? true
+move from (2, 39) to (2, 38)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 38) to (3, 38)
+Fall down
+should move? true
+move from (3, 38) to (3, 37)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 37) to (4, 37)
+Fall down
+should move? true
+move from (4, 37) to (4, 36)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+|.....#.|
+|....###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 42) to (1, 42)
+Fall down
+should move? true
+move from (1, 42) to (1, 41)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 41) to (2, 41)
+Fall down
+should move? true
+move from (2, 41) to (2, 40)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 40) to (3, 40)
+Fall down
+should move? true
+move from (3, 40) to (3, 39)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 39) to (4, 39)
+Fall down
+|......#|
+|......#|
+|....###|
+|.....#.|
+|....###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 45) to (3, 45)
+Fall down
+should move? true
+move from (3, 45) to (3, 44)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 44) to (4, 44)
+Fall down
+should move? true
+move from (4, 44) to (4, 43)
+Pushed by Jet! Some('<')
+should move? true
+move from (4, 43) to (3, 43)
+Fall down
+should move? true
+move from (3, 43) to (3, 42)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 42) to (2, 42)
+Fall down
+should move? true
+move from (2, 42) to (2, 41)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 41) to (3, 41)
+Fall down
+should move? true
+move from (3, 41) to (3, 40)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 40) to (2, 40)
+Fall down
+should move? true
+move from (2, 40) to (2, 39)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 39) to (3, 39)
+Fall down
+should move? true
+move from (3, 39) to (3, 38)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 38) to (3, 37)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 37) to (2, 37)
+Fall down
+|......#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 45) to (1, 45)
+Fall down
+should move? true
+move from (1, 45) to (1, 44)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 44) to (0, 44)
+Fall down
+should move? true
+move from (0, 44) to (0, 43)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 43) to (1, 43)
+Fall down
+should move? true
+move from (1, 43) to (1, 42)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 42) to (2, 42)
+Fall down
+should move? true
+move from (2, 42) to (2, 41)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 41) to (1, 41)
+Fall down
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 46) to (3, 46)
+Fall down
+should move? true
+move from (3, 46) to (3, 45)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 45) to (3, 44)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 44) to (3, 43)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 43) to (2, 43)
+Fall down
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 47) to (1, 47)
+Fall down
+should move? true
+move from (1, 47) to (1, 46)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 46) to (0, 46)
+Fall down
+should move? true
+move from (0, 46) to (0, 45)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 45) to (1, 45)
+Fall down
+should move? true
+move from (1, 45) to (1, 44)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 44) to (2, 44)
+Fall down
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 50) to (3, 50)
+Fall down
+should move? true
+move from (3, 50) to (3, 49)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 49) to (2, 49)
+Fall down
+should move? true
+move from (2, 49) to (2, 48)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 48) to (1, 48)
+Fall down
+should move? true
+move from (1, 48) to (1, 47)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 47) to (0, 47)
+Fall down
+should move? true
+move from (0, 47) to (0, 46)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+|..#....|
+|..#....|
+|####...|
+|..###..|
+|...#...|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 52) to (1, 52)
+Fall down
+should move? true
+move from (1, 52) to (1, 51)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 51) to (0, 51)
+Fall down
+should move? true
+move from (0, 51) to (0, 50)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 50) to (0, 49)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 49) to (1, 49)
+Fall down
+should move? true
+move from (1, 49) to (1, 48)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (1, 48) to (1, 47)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 47) to (0, 47)
+Fall down
+|#......|
+|#......|
+|#.#....|
+|#.#....|
+|####...|
+|..###..|
+|...#...|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 54) to (3, 54)
+Fall down
+should move? true
+move from (3, 54) to (3, 53)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 53) to (4, 53)
+Fall down
+should move? true
+move from (4, 53) to (4, 52)
+Pushed by Jet! Some('<')
+should move? true
+move from (4, 52) to (3, 52)
+Fall down
+should move? true
+move from (3, 52) to (3, 51)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 51) to (2, 51)
+Fall down
+should move? true
+move from (2, 51) to (2, 50)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 50) to (3, 50)
+Fall down
+should move? true
+move from (3, 50) to (3, 49)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 49) to (4, 49)
+Fall down
+should move? true
+move from (4, 49) to (4, 48)
+Pushed by Jet! Some('>')
+should move? true
+move from (4, 48) to (5, 48)
+Fall down
+should move? true
+move from (5, 48) to (5, 47)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (5, 47) to (5, 46)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (5, 46) to (5, 45)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (5, 45) to (5, 44)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+|#......|
+|#......|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 54) to (3, 54)
+Fall down
+should move? true
+move from (3, 54) to (3, 53)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 53) to (2, 53)
+Fall down
+should move? true
+move from (2, 53) to (2, 52)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 52) to (3, 52)
+Fall down
+should move? true
+move from (3, 52) to (3, 51)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 51) to (3, 50)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 50) to (2, 50)
+Fall down
+should move? true
+move from (2, 50) to (2, 49)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 49) to (1, 49)
+Fall down
+|#......|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 54) to (1, 54)
+Fall down
+should move? true
+move from (1, 54) to (1, 53)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 53) to (2, 53)
+Fall down
+should move? true
+move from (2, 53) to (2, 52)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 52) to (3, 52)
+Fall down
+should move? true
+move from (3, 52) to (3, 51)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 51) to (2, 51)
+Fall down
+should move? true
+move from (2, 51) to (2, 50)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 50) to (3, 50)
+Fall down
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 56) to (3, 56)
+Fall down
+should move? true
+move from (3, 56) to (3, 55)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 55) to (4, 55)
+Fall down
+should move? true
+move from (4, 55) to (4, 54)
+Pushed by Jet! Some('<')
+should move? true
+move from (4, 54) to (3, 54)
+Fall down
+should move? true
+move from (3, 54) to (3, 53)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 53) to (2, 53)
+Fall down
+|....#..|
+|....#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 59) to (1, 59)
+Fall down
+should move? true
+move from (1, 59) to (1, 58)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 58) to (2, 58)
+Fall down
+should move? true
+move from (2, 58) to (2, 57)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 57) to (3, 57)
+Fall down
+should move? true
+move from (3, 57) to (3, 56)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 56) to (4, 56)
+Fall down
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 63) to (1, 63)
+Fall down
+should move? true
+move from (1, 63) to (1, 62)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 62) to (0, 62)
+Fall down
+should move? true
+move from (0, 62) to (0, 61)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 61) to (0, 60)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 60) to (1, 60)
+Fall down
+should move? true
+move from (1, 60) to (1, 59)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 59) to (0, 59)
+Fall down
+should move? true
+move from (0, 59) to (0, 58)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 58) to (0, 57)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 57) to (0, 56)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 56) to (1, 56)
+Fall down
+should move? true
+move from (1, 56) to (1, 55)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 55) to (2, 55)
+Fall down
+should move? true
+move from (2, 55) to (2, 54)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 54) to (1, 54)
+Fall down
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 63) to (3, 63)
+Fall down
+should move? true
+move from (3, 63) to (3, 62)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 62) to (3, 61)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 61) to (2, 61)
+Fall down
+should move? true
+move from (2, 61) to (2, 60)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 60) to (1, 60)
+Fall down
+|.####..|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 64) to (3, 64)
+Fall down
+should move? true
+move from (3, 64) to (3, 63)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 63) to (4, 63)
+Fall down
+should move? true
+move from (4, 63) to (4, 62)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (4, 62) to (4, 61)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (4, 61) to (4, 60)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+|.....#.|
+|....###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 66) to (1, 66)
+Fall down
+should move? true
+move from (1, 66) to (1, 65)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 65) to (0, 65)
+Fall down
+should move? true
+move from (0, 65) to (0, 64)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 64) to (1, 64)
+Fall down
+should move? true
+move from (1, 64) to (1, 63)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 63) to (0, 63)
+Fall down
+should move? true
+move from (0, 63) to (0, 62)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 62) to (1, 62)
+Fall down
+should move? true
+move from (1, 62) to (1, 61)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+|...#...|
+|...#.#.|
+|.######|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 67) to (1, 67)
+Fall down
+should move? true
+move from (1, 67) to (1, 66)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 66) to (0, 66)
+Fall down
+should move? true
+move from (0, 66) to (0, 65)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+should move? true
+move from (0, 65) to (0, 64)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 64) to (1, 64)
+Fall down
+should move? true
+move from (1, 64) to (1, 63)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 63) to (2, 63)
+Fall down
+should move? true
+move from (2, 63) to (2, 62)
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 62) to (1, 62)
+Fall down
+|.#.....|
+|.#.....|
+|.#.#...|
+|.#.#.#.|
+|.######|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 69) to (3, 69)
+Fall down
+should move? true
+move from (3, 69) to (3, 68)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 68) to (4, 68)
+Fall down
+should move? true
+move from (4, 68) to (4, 67)
+Pushed by Jet! Some('>')
+should move? true
+move from (4, 67) to (5, 67)
+Fall down
+should move? true
+move from (5, 67) to (5, 66)
+Pushed by Jet! Some('<')
+should move? true
+move from (5, 66) to (4, 66)
+Fall down
+should move? true
+move from (4, 66) to (4, 65)
+Pushed by Jet! Some('<')
+should move? true
+move from (4, 65) to (3, 65)
+Fall down
+should move? true
+move from (3, 65) to (3, 64)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 64) to (2, 64)
+Fall down
+|.###...|
+|.###...|
+|.#.#...|
+|.#.#.#.|
+|.######|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 69) to (3, 69)
+Fall down
+should move? true
+move from (3, 69) to (3, 68)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 68) to (3, 67)
+Pushed by Jet! Some('>')
+should move? false
+Fall down
+should move? true
+move from (3, 67) to (3, 66)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 66) to (2, 66)
+Fall down
+|..####.|
+|.###...|
+|.###...|
+|.#.#...|
+|.#.#.#.|
+|.######|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 70) to (1, 70)
+Fall down
+should move? true
+move from (1, 70) to (1, 69)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 69) to (0, 69)
+Fall down
+should move? true
+move from (0, 69) to (0, 68)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 68) to (1, 68)
+Fall down
+should move? true
+move from (1, 68) to (1, 67)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 67) to (0, 67)
+Fall down
+should move? true
+move from (0, 67) to (0, 66)
+Pushed by Jet! Some('<')
+should move? false
+Fall down
+|.#.....|
+|###....|
+|.#####.|
+|.###...|
+|.###...|
+|.#.#...|
+|.#.#.#.|
+|.######|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 72) to (1, 72)
+Fall down
+should move? true
+move from (1, 72) to (1, 71)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 71) to (2, 71)
+Fall down
+should move? true
+move from (2, 71) to (2, 70)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 70) to (3, 70)
+Fall down
+should move? true
+move from (3, 70) to (3, 69)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 69) to (2, 69)
+Fall down
+should move? true
+move from (2, 69) to (2, 68)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 68) to (3, 68)
+Fall down
+should move? true
+move from (3, 68) to (3, 67)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 67) to (4, 67)
+Fall down
+|......#|
+|.#....#|
+|###.###|
+|.#####.|
+|.###...|
+|.###...|
+|.#.#...|
+|.#.#.#.|
+|.######|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('<')
+should move? true
+move from (2, 73) to (1, 73)
+Fall down
+should move? true
+move from (1, 73) to (1, 72)
+Pushed by Jet! Some('<')
+should move? true
+move from (1, 72) to (0, 72)
+Fall down
+should move? true
+move from (0, 72) to (0, 71)
+Pushed by Jet! Some('>')
+should move? true
+move from (0, 71) to (1, 71)
+Fall down
+should move? true
+move from (1, 71) to (1, 70)
+Pushed by Jet! Some('>')
+should move? true
+move from (1, 70) to (2, 70)
+Fall down
+should move? true
+move from (2, 70) to (2, 69)
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 69) to (3, 69)
+Fall down
+should move? true
+move from (3, 69) to (3, 68)
+Pushed by Jet! Some('>')
+should move? true
+move from (3, 68) to (4, 68)
+Fall down
+|....#..|
+|....#..|
+|....#.#|
+|.#..#.#|
+|###.###|
+|.#####.|
+|.###...|
+|.###...|
+|.#.#...|
+|.#.#.#.|
+|.######|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|....#..|
+|...###.|
+|#...#..|
+|#####..|
+|#.#....|
+|#.#....|
+|####...|
+|..#####|
+|...#.##|
+|..####.|
+|.##....|
+|.##...#|
+|..#...#|
+|..#.###|
+|..#..#.|
+|..#.###|
+|.#####.|
+|....#..|
+|....#..|
+|....#..|
+|....#..|
+|.##.#..|
+|.##.#..|
+|..###..|
+|...#...|
+|..###..|
+|...#...|
+|..####.|
+|.....##|
+|.....##|
+|......#|
+|......#|
+|...####|
+|..###..|
+|...#...|
+|#..####|
+|#...#..|
+|#...#..|
+|#...##.|
+|##..##.|
+|######.|
+|.###...|
+|..#....|
+|.####..|
+|....##.|
+|....##.|
+|....#..|
+|..#.#..|
+|..#.#..|
+|#####..|
+|..###..|
+|...#...|
+|..####.|
++_______+
+
+Pushed by Jet! Some('>')
+should move? true
+move from (2, 75) to (3, 75)
+Fall down
+should move? true
+move from (3, 75) to (3, 74)
+Pushed by Jet! Some('<')
+should move? true
+move from (3, 74) to (2, 74)
