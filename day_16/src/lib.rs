@@ -3,126 +3,191 @@ use std::collections::BinaryHeap;
 use std::cmp::Ordering;
 use std::cmp::Ord;
 use std::collections::HashSet;
+use std::collections::VecDeque;
 
-pub fn first(input: &[String], target_y: isize) -> usize {
-    djikstras(0, &parse_input(&input))
-}
+pub fn first(input: &[String]) -> usize {
+    let mut nodes = parse_input(&input);
+    nodes.sort_by(|a, b| a.flow_rate.cmp(&b.flow_rate).reverse());
+    println!("sorted nodes by flow rate {:?}", nodes);
+    let mut start = 0;
+    let mut previouses: HashMap<usize, usize> = HashMap::new();
+    let mut minutes_remaining = 30;
 
-pub fn second(input: &[String], max_x_y: isize) -> usize {
+    let mut iter = nodes.iter();
+    while let Some(node) = iter.next() {
+        println!("trying {} to {} with {}", Valve::position_to_alpha(start), Valve::position_to_alpha(node.position), minutes_remaining);
+        if minutes_remaining <= 0 {
+            println!("out of time");
+            break;
+        }
+
+        if start == node.position {
+            println!("loop");
+            break;
+        }
+        if previouses.get(&node.position).is_some() { 
+            println!("already went here");
+            continue;
+        }
+        if node.flow_rate == 0 { 
+            println!("got to the 0 flow rate mfers)");
+            break;
+        }
+
+    
+
+        let mut already_seen = HashSet::new();
+        previouses.iter().for_each(|(destination, previous)| {
+            already_seen.insert(*destination);
+            already_seen.insert(*previous);
+        });
+        let new_previouses = bfs(&parse_input(&input), start, node.position);
+        new_previouses.iter().for_each(|(destination, previous)| { 
+            minutes_remaining -= if nodes[*previous].flow_rate > 0 { 2 } else { 1 };
+            previouses.insert(*destination, *previous); 
+        });
+        start = node.position;
+    }
     0
 }
 
-#[derive(PartialEq, Eq, Clone)]
-struct State {
-    cost: usize, 
+pub fn second(input: &[String]) -> usize {
+    0
+}
+
+struct State{
     position: usize,
-    minutes_remaining: usize,
-    already_flowing: HashSet<usize>,
+    history: Vec<usize>,
 }
 
-// The priority queue depends on `Ord`.
-// Explicitly implement the trait so the queue becomes a min-heap
-// instead of a max-heap.
-impl Ord for State {
-    fn cmp(&self, other: &Self) -> Ordering {
-        // Notice that the we flip the ordering on costs.
-        // In case of a tie we compare positions - this step is necessary
-        // to make implementations of `PartialEq` and `Ord` consistent.
-        other
-            .cost
-            .cmp(&self.cost)
-            .then_with(|| self.position.cmp(&other.position))
-            .then_with(|| self.minutes_remaining.cmp(&other.minutes_remaining))
-            .reverse() // we want the largest cost actually
-    }
-}
+fn bfs(edges: &Vec<Valve>, start: usize, end: usize) -> HashMap<usize, usize> {
+    let mut stack: VecDeque<State> = VecDeque::new();
+    stack.push_back(State{position: start, history: vec!(start)});
 
-// `PartialOrd` needs to be implemented as well.
-impl PartialOrd for State {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-fn djikstras(start: usize, edges: &Vec<Valve>) -> usize {
-    // Djikstra's! https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
-    let mut distances: HashMap<usize, usize> = edges
-        .iter()
-        .map(|valve| (valve.position, 0))
-        .collect();
-    // distances.insert(start, 0);
-    println!("distances {:?}", distances);
-
-    // let mut previouses: HashMap<usize, usize> = HashMap::new(); // notate the path taken so we can later calculate the cost? maybe
-
-    let mut unvisited = BinaryHeap::new();
-    unvisited.push(State {
-        cost: 0,
-        position: start,
-        minutes_remaining: 30,
-        already_flowing: HashSet::new(),
-    });
-
-    while let Some(State { cost, position, minutes_remaining, already_flowing }) = unvisited.pop() {
-        println!("current node {} {} {}", cost, Valve::position_to_alpha(position), minutes_remaining);
-        // if we're out of time we're done
-        if minutes_remaining == 0 {
-            println!("minutes remaining 0");
-            return cost;
+    while let Some(State{position, history}) = stack.pop_front() {
+        println!("bfs @ {}", Valve::position_to_alpha(position));
+        if position == end {
+            let mut ret_val = HashMap::new();
+            history.windows(2).for_each(|chunks| { ret_val.insert(chunks[1], chunks[0]); } );
+            return ret_val;
         }
 
-        // no more valves to open, we're done
-        if edges.iter().fold(true, |accum, edge| {
-            accum && (edge.flow_rate == 0 || *distances.get(&edge.position).unwrap() > 0)
-        }) {
-            println!("no more valves to open {}", minutes_remaining);
-            return already_flowing.iter().fold(cost, |accum, next| accum + (edges[*next].flow_rate * minutes_remaining));
-        }
-
-        // we've gone down a bad path
-        if cost < *distances.get(&position).unwrap() {
-            println!("this is a bad path?");
-            continue;
-        }
-
-        // we have the choice of either moving to a different node, or pausing to turn us on (if it is not in the already flowing set)
-        let cost_increased_by_already_flowing_items = already_flowing.iter().fold(0, |accum, k| {accum + edges[*k].flow_rate});
-        let mut moves_to_consider = vec!((1, already_flowing.clone()));
-        if  !already_flowing.contains(&position) {
-            let mut new_flowing = already_flowing.clone();
-            new_flowing.insert(position);
-            moves_to_consider.push((2, new_flowing));
-        }
-
-        // for each neighbor, see if we can find a way with a lower cost going through this node
         for neighbor in edges[position].neighbors.iter() {
-            for (new_minutes, new_already_flowing) in moves_to_consider.iter() {
-                // let new_minutes = minutes_remaining - new_minutes;
-                let new_cost = cost + (new_minutes * cost_increased_by_already_flowing_items);
+            let mut new_stack = history.clone();
+            new_stack.push(*neighbor);
 
-                let next = State {
-                    cost: new_cost,
-                    position: *neighbor,
-                    minutes_remaining: minutes_remaining - *new_minutes,
-                    already_flowing: new_already_flowing.clone(),
-                };
-
-                // if we have a better way to get there from here
-                if new_cost >= *distances.get(&neighbor).unwrap() {
-                    // println!("from {} to {} with cost {} at {}", Valve::position_to_alpha(position), Valve::position_to_alpha(*neighbor), next.cost, next.minutes_remaining);
-                    unvisited.push(next);
-                    distances.insert(*neighbor,new_cost);
-                    // previouses.insert(*neighbor, position);
-                }
-            }
+            let state = State{
+                position: *neighbor,
+                history: new_stack
+            };
+            stack.push_back(state);
         }
     }
 
-    // not reachable
-    panic!("OH NO")
+    // return path not found
+    HashMap::new()
 }
 
-#[derive(Default, Clone)]
+// #[derive(PartialEq, Eq, Clone)]
+// struct State {
+//     cost: usize, 
+//     position: usize,
+//     already_flowing: HashSet<usize>,
+// }
+
+// // The priority queue depends on `Ord`.
+// // Explicitly implement the trait so the queue becomes a min-heap
+// // instead of a max-heap.
+// impl Ord for State {
+//     fn cmp(&self, other: &Self) -> Ordering {
+//         // Notice that the we flip the ordering on costs.
+//         // In case of a tie we compare positions - this step is necessary
+//         // to make implementations of `PartialEq` and `Ord` consistent.
+//         other
+//             .cost
+//             .cmp(&self.cost)
+//             .then_with(|| self.position.cmp(&other.position))
+//             .then_with(|| self.already_flowing.len().cmp(&other.already_flowing.len()))
+//     }
+// }
+
+// // `PartialOrd` needs to be implemented as well.
+// impl PartialOrd for State {
+//     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+//         Some(self.cmp(other))
+//     }
+// }
+
+// fn djikstras(start: usize, end: usize, edges: &Vec<Valve>, already_flowing: &HashSet<usize>, max_cost: usize) -> HashMap<usize, usize> {
+//     // Djikstra's! https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+//     let mut distances: HashMap<usize, usize> = edges
+//         .iter()
+//         .map(|valve| (valve.position, usize::MAX))
+//         .collect();
+//     // distances.insert(start, 0);
+//     println!("distances {:?}", distances);
+
+//     let mut previouses: HashMap<usize, usize> = HashMap::new(); // notate the path taken so we can later calculate the cost? maybe
+
+//     let mut unvisited = BinaryHeap::new();
+//     unvisited.push(State {
+//         cost: 0,
+//         position: start,
+//         already_flowing: already_flowing.clone()
+//     });
+
+//     while let Some(State { cost, position, already_flowing }) = unvisited.pop() {
+//         println!("current node {} {}", cost, Valve::position_to_alpha(position));
+//         // if we're out of time we're done
+//         if cost >= max_cost {
+//             println!("minutes remaining 0");
+//             return previouses;
+//         }
+
+//         if position == end {
+//             println!("at target");
+//             return previouses;
+//         }
+
+//         // // we've gone down a bad path
+//         // if cost > *distances.get(&position).unwrap() {
+//         //     println!("this is a bad path?");
+//         //     continue;
+//         // }
+
+//         // for each neighbor, see if we can find a way with a lower cost going through this node
+//         for neighbor in edges[position].neighbors.iter() {
+//             println!("considering neighbor? {:?}", Valve::position_to_alpha(*neighbor));
+//             let neighbor_already_flowing = already_flowing.contains(neighbor);
+            
+//             // let new_minutes = minutes_remaining - new_minutes;
+//             let new_cost = if neighbor_already_flowing { 1 } else { 2 };
+//             let new_already_flowing = if neighbor_already_flowing {
+//                 already_flowing.clone()
+//             } else {
+//                 let mut new_one = already_flowing.clone();
+//                 new_one.insert(*neighbor);
+//                 new_one.clone()
+//             }.clone();
+
+//             let next = State {
+//                 cost: cost + new_cost,
+//                 position: *neighbor,
+//                 already_flowing: new_already_flowing,
+//             };
+
+//             // if we have a better way to get there from here
+//             unvisited.push(next);
+//             distances.insert(*neighbor,new_cost);
+//             previouses.insert(*neighbor, position);
+//         }
+//     }
+
+//     // not reachable
+//     panic!("OH NO")
+// }
+
+#[derive(Default, Clone, Debug)]
 struct Valve{
     flow_rate: usize, 
     neighbors: Vec<usize>,
@@ -202,14 +267,14 @@ mod tests {
     #[test]
     fn first_test() {
         let input = example();
-        let result = first(&input, 10);
+        let result = first(&input);
         assert_eq!(result, 1651);
     }
 
     #[test]
     fn second_test() {
         let input = example();
-        let result = second(&input, 20);
+        let result = second(&input);
         assert_eq!(result, 0);
     }
 }
