@@ -9,45 +9,19 @@ pub fn first(input: &[String]) -> usize {
     let mut nodes = parse_input(&input);
     nodes.sort_by(|a, b| a.flow_rate.cmp(&b.flow_rate).reverse());
     println!("sorted nodes by flow rate {:?}", nodes);
-    let mut start = 0;
-    let mut previouses: HashMap<usize, usize> = HashMap::new();
-    let mut minutes_remaining = 30;
-
-    let mut iter = nodes.iter();
-    while let Some(node) = iter.next() {
-        println!("trying {} to {} with {}", Valve::position_to_alpha(start), Valve::position_to_alpha(node.position), minutes_remaining);
-        if minutes_remaining <= 0 {
-            println!("out of time");
-            break;
-        }
-
-        if start == node.position {
-            println!("loop");
-            break;
-        }
-        if previouses.get(&node.position).is_some() { 
-            println!("already went here");
-            continue;
-        }
-        if node.flow_rate == 0 { 
-            println!("got to the 0 flow rate mfers)");
-            break;
-        }
-
     
+    let all_distances: HashMap<usize, HashMap<usize, usize>> = nodes.iter().flat_map(|node| {
+        if node.neighbors.is_empty() {
+            None
+        } else {
+            Some((node.position, djikstras(node.position, &nodes)))
+        }
+    }).collect();
+    println!("for each node, all shortest paths to other nodes {:?}", all_distances);
 
-        let mut already_seen = HashSet::new();
-        previouses.iter().for_each(|(destination, previous)| {
-            already_seen.insert(*destination);
-            already_seen.insert(*previous);
-        });
-        let new_previouses = bfs(&parse_input(&input), start, node.position);
-        new_previouses.iter().for_each(|(destination, previous)| { 
-            minutes_remaining -= if nodes[*previous].flow_rate > 0 { 2 } else { 1 };
-            previouses.insert(*destination, *previous); 
-        });
-        start = node.position;
-    }
+    let dfs_paths = dfs(&all_distances, &mut nodes, 0, 30);
+    println!("dfs paths {:?}", dfs_paths);
+
     0
 }
 
@@ -55,137 +29,117 @@ pub fn second(input: &[String]) -> usize {
     0
 }
 
-struct State{
+#[derive(PartialEq, Eq, Clone)]
+struct State {
+    cost: usize, 
     position: usize,
-    history: Vec<usize>,
 }
 
-fn bfs(edges: &Vec<Valve>, start: usize, end: usize) -> HashMap<usize, usize> {
-    let mut stack: VecDeque<State> = VecDeque::new();
-    stack.push_back(State{position: start, history: vec!(start)});
+// The priority queue depends on `Ord`.
+// Explicitly implement the trait so the queue becomes a min-heap
+// instead of a max-heap.
+impl Ord for State {
+    fn cmp(&self, other: &Self) -> Ordering {
+        // Notice that the we flip the ordering on costs.
+        // In case of a tie we compare positions - this step is necessary
+        // to make implementations of `PartialEq` and `Ord` consistent.
+        other
+            .cost
+            .cmp(&self.cost)
+            .then_with(|| self.position.cmp(&other.position))
+    }
+}
 
-    while let Some(State{position, history}) = stack.pop_front() {
-        println!("bfs @ {}", Valve::position_to_alpha(position));
-        if position == end {
-            let mut ret_val = HashMap::new();
-            history.windows(2).for_each(|chunks| { ret_val.insert(chunks[1], chunks[0]); } );
-            return ret_val;
-        }
+// `PartialOrd` needs to be implemented as well.
+impl PartialOrd for State {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
 
+fn djikstras(start: usize, edges: &Vec<Valve>) -> HashMap<usize, usize> {
+    // Djikstra's! https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+    let mut distances: HashMap<usize, usize> = edges
+        .iter()
+        .map(|valve| (valve.position, 99))
+        .collect();
+    distances.insert(start, 0);
+    println!("distances {:?}", distances);
+
+    // let mut previouses: HashMap<usize, usize> = HashMap::new(); // notate the path taken so we can later calculate the cost? maybe
+
+    let mut unvisited = BinaryHeap::new();
+    unvisited.push(State {
+        cost: 0,
+        position: start,
+    });
+
+    while let Some(State { cost, position }) = unvisited.pop() {
+        println!("current node {} {}", cost, Valve::position_to_alpha(position));
+
+        // // we've gone down a bad path
+        // if cost > *distances.get(&position).unwrap() {
+        //     println!("this is a bad path?");
+        //     continue;
+        // }
+
+        // for each neighbor, see if we can find a way with a lower cost going through this node
         for neighbor in edges[position].neighbors.iter() {
-            let mut new_stack = history.clone();
-            new_stack.push(*neighbor);
-
-            let state = State{
+            println!("considering neighbor? {:?}", Valve::position_to_alpha(*neighbor));
+            let next = State {
+                cost: cost + 1,
                 position: *neighbor,
-                history: new_stack
             };
-            stack.push_back(state);
+
+            // if we have a better way to get there from here
+            if next.cost < *distances.get(neighbor).unwrap() {
+                unvisited.push(next);
+                distances.insert(*neighbor,cost + 1);
+            }
+            // previouses.insert(*neighbor, position);
         }
     }
 
-    // return path not found
-    HashMap::new()
+    // not reachable
+    distances
 }
 
-// #[derive(PartialEq, Eq, Clone)]
-// struct State {
-//     cost: usize, 
-//     position: usize,
-//     already_flowing: HashSet<usize>,
-// }
+fn dfs(distances: &HashMap<usize, HashMap<usize, usize>>, nodes: &Vec<Valve>, position: usize, remaining_time: usize) -> Vec<Vec<usize>> {
+    let mut paths: Vec<Vec<usize>> = vec!();
 
-// // The priority queue depends on `Ord`.
-// // Explicitly implement the trait so the queue becomes a min-heap
-// // instead of a max-heap.
-// impl Ord for State {
-//     fn cmp(&self, other: &Self) -> Ordering {
-//         // Notice that the we flip the ordering on costs.
-//         // In case of a tie we compare positions - this step is necessary
-//         // to make implementations of `PartialEq` and `Ord` consistent.
-//         other
-//             .cost
-//             .cmp(&self.cost)
-//             .then_with(|| self.position.cmp(&other.position))
-//             .then_with(|| self.already_flowing.len().cmp(&other.already_flowing.len()))
-//     }
-// }
+    fn dfs_recurse(nodes: &Vec<Valve>, distances: &HashMap<usize, HashMap<usize, usize>>, paths: &mut Vec<Vec<usize>>, position: usize, remaining_time: usize, visited: Vec<usize>) {
+        if remaining_time <= 0 {
+            println!("out of time");
+            return
+        }
 
-// // `PartialOrd` needs to be implemented as well.
-// impl PartialOrd for State {
-//     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-//         Some(self.cmp(other))
-//     }
-// }
+        for (next, distance) in distances.get(&position).unwrap().iter() {
+            if nodes[*next].flow_rate == 0 {
+                // TODO oh darn we've messed up the vector / alpha mapping again somehow
+                println!("skipping no flow rate sob {:?} {:?}", Valve::position_to_alpha(*next), nodes[*next]);
+                continue
+            }
 
-// fn djikstras(start: usize, end: usize, edges: &Vec<Valve>, already_flowing: &HashSet<usize>, max_cost: usize) -> HashMap<usize, usize> {
-//     // Djikstra's! https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
-//     let mut distances: HashMap<usize, usize> = edges
-//         .iter()
-//         .map(|valve| (valve.position, usize::MAX))
-//         .collect();
-//     // distances.insert(start, 0);
-//     println!("distances {:?}", distances);
+            if visited.contains(next) {
+                println!("skipping already visited");
+                continue
+            }
 
-//     let mut previouses: HashMap<usize, usize> = HashMap::new(); // notate the path taken so we can later calculate the cost? maybe
+            if remaining_time - distance - 1 <= 0 {
+                println!("skipping one we don't have time to get to");
+                continue
+            }
 
-//     let mut unvisited = BinaryHeap::new();
-//     unvisited.push(State {
-//         cost: 0,
-//         position: start,
-//         already_flowing: already_flowing.clone()
-//     });
+            let  mut new_visited = visited.clone();
+            new_visited.push(*next);
+            dfs_recurse(&nodes, &distances, paths, *next, remaining_time - distance - 1, new_visited);
+        }
+        paths.push(visited);
+    }
 
-//     while let Some(State { cost, position, already_flowing }) = unvisited.pop() {
-//         println!("current node {} {}", cost, Valve::position_to_alpha(position));
-//         // if we're out of time we're done
-//         if cost >= max_cost {
-//             println!("minutes remaining 0");
-//             return previouses;
-//         }
-
-//         if position == end {
-//             println!("at target");
-//             return previouses;
-//         }
-
-//         // // we've gone down a bad path
-//         // if cost > *distances.get(&position).unwrap() {
-//         //     println!("this is a bad path?");
-//         //     continue;
-//         // }
-
-//         // for each neighbor, see if we can find a way with a lower cost going through this node
-//         for neighbor in edges[position].neighbors.iter() {
-//             println!("considering neighbor? {:?}", Valve::position_to_alpha(*neighbor));
-//             let neighbor_already_flowing = already_flowing.contains(neighbor);
-            
-//             // let new_minutes = minutes_remaining - new_minutes;
-//             let new_cost = if neighbor_already_flowing { 1 } else { 2 };
-//             let new_already_flowing = if neighbor_already_flowing {
-//                 already_flowing.clone()
-//             } else {
-//                 let mut new_one = already_flowing.clone();
-//                 new_one.insert(*neighbor);
-//                 new_one.clone()
-//             }.clone();
-
-//             let next = State {
-//                 cost: cost + new_cost,
-//                 position: *neighbor,
-//                 already_flowing: new_already_flowing,
-//             };
-
-//             // if we have a better way to get there from here
-//             unvisited.push(next);
-//             distances.insert(*neighbor,new_cost);
-//             previouses.insert(*neighbor, position);
-//         }
-//     }
-
-//     // not reachable
-//     panic!("OH NO")
-// }
+    dfs_recurse(&nodes, &distances, &mut paths, position, remaining_time, vec!());
+    paths
+}
 
 #[derive(Default, Clone, Debug)]
 struct Valve{
