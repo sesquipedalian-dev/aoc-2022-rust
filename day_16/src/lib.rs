@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-use std::collections::BinaryHeap;
-use std::cmp::Ordering;
 use std::cmp::Ord;
+use std::cmp::Ordering;
+use std::collections::BinaryHeap;
+use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;
 
@@ -9,15 +9,21 @@ pub fn first(input: &[String]) -> usize {
     let mut nodes = parse_input(&input);
     nodes.sort_by(|a, b| a.flow_rate.cmp(&b.flow_rate).reverse());
     println!("sorted nodes by flow rate {:?}", nodes);
-    
-    let all_distances: HashMap<usize, HashMap<usize, usize>> = nodes.iter().flat_map(|node| {
-        if node.neighbors.is_empty() {
-            None
-        } else {
-            Some((node.position, djikstras(node.position, &nodes)))
-        }
-    }).collect();
-    println!("for each node, all shortest paths to other nodes {:?}", all_distances);
+
+    let all_distances: HashMap<usize, HashMap<usize, usize>> = nodes
+        .iter()
+        .flat_map(|node| {
+            if node.neighbors.is_empty() {
+                None
+            } else {
+                Some((node.position, djikstras(node.position, &nodes)))
+            }
+        })
+        .collect();
+    println!(
+        "for each node, all shortest paths to other nodes {:?}",
+        all_distances
+    );
 
     let dfs_paths = dfs(&all_distances, &mut nodes, 0, 30);
     println!("dfs paths {:?}", dfs_paths);
@@ -31,7 +37,7 @@ pub fn second(input: &[String]) -> usize {
 
 #[derive(PartialEq, Eq, Clone)]
 struct State {
-    cost: usize, 
+    cost: usize,
     position: usize,
 }
 
@@ -59,10 +65,8 @@ impl PartialOrd for State {
 
 fn djikstras(start: usize, edges: &Vec<Valve>) -> HashMap<usize, usize> {
     // Djikstra's! https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
-    let mut distances: HashMap<usize, usize> = edges
-        .iter()
-        .map(|valve| (valve.position, 99))
-        .collect();
+    let mut distances: HashMap<usize, usize> =
+        edges.iter().map(|valve| (valve.position, 99)).collect();
     distances.insert(start, 0);
     println!("distances {:?}", distances);
 
@@ -75,7 +79,11 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> HashMap<usize, usize> {
     });
 
     while let Some(State { cost, position }) = unvisited.pop() {
-        println!("current node {} {}", cost, Valve::position_to_alpha(position));
+        println!(
+            "current node {} {}",
+            cost,
+            Valve::position_to_alpha(position)
+        );
 
         // // we've gone down a bad path
         // if cost > *distances.get(&position).unwrap() {
@@ -85,7 +93,10 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> HashMap<usize, usize> {
 
         // for each neighbor, see if we can find a way with a lower cost going through this node
         for neighbor in edges[position].neighbors.iter() {
-            println!("considering neighbor? {:?}", Valve::position_to_alpha(*neighbor));
+            println!(
+                "considering neighbor? {:?}",
+                Valve::position_to_alpha(*neighbor)
+            );
             let next = State {
                 cost: cost + 1,
                 position: *neighbor,
@@ -94,7 +105,7 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> HashMap<usize, usize> {
             // if we have a better way to get there from here
             if next.cost < *distances.get(neighbor).unwrap() {
                 unvisited.push(next);
-                distances.insert(*neighbor,cost + 1);
+                distances.insert(*neighbor, cost + 1);
             }
             // previouses.insert(*neighbor, position);
         }
@@ -104,72 +115,115 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> HashMap<usize, usize> {
     distances
 }
 
-fn dfs(distances: &HashMap<usize, HashMap<usize, usize>>, nodes: &Vec<Valve>, position: usize, remaining_time: usize) -> Vec<Vec<usize>> {
-    let mut paths: Vec<Vec<usize>> = vec!();
+fn dfs(
+    distances: &HashMap<usize, HashMap<usize, usize>>,
+    nodes: &Vec<Valve>,
+    position: usize,
+    remaining_time: usize,
+) -> Vec<Vec<usize>> {
+    let mut paths: Vec<Vec<usize>> = vec![];
 
-    fn dfs_recurse(nodes: &Vec<Valve>, distances: &HashMap<usize, HashMap<usize, usize>>, paths: &mut Vec<Vec<usize>>, position: usize, remaining_time: usize, visited: Vec<usize>) {
+    fn dfs_recurse(
+        nodes: &Vec<Valve>,
+        distances: &HashMap<usize, HashMap<usize, usize>>,
+        paths: &mut Vec<Vec<usize>>,
+        position: usize,
+        remaining_time: usize,
+        visited: Vec<usize>,
+    ) {
         if remaining_time <= 0 {
             println!("out of time");
-            return
+            return;
         }
 
         for (next, distance) in distances.get(&position).unwrap().iter() {
             if nodes[*next].flow_rate == 0 {
                 // TODO oh darn we've messed up the vector / alpha mapping again somehow
-                println!("skipping no flow rate sob {:?} {:?}", Valve::position_to_alpha(*next), nodes[*next]);
-                continue
+                println!(
+                    "skipping no flow rate sob {:?} {:?}",
+                    Valve::position_to_alpha(*next),
+                    nodes[*next]
+                );
+                continue;
             }
 
             if visited.contains(next) {
                 println!("skipping already visited");
-                continue
+                continue;
             }
 
             if remaining_time - distance - 1 <= 0 {
                 println!("skipping one we don't have time to get to");
-                continue
+                continue;
             }
 
-            let  mut new_visited = visited.clone();
+            let mut new_visited = visited.clone();
             new_visited.push(*next);
-            dfs_recurse(&nodes, &distances, paths, *next, remaining_time - distance - 1, new_visited);
+            dfs_recurse(
+                &nodes,
+                &distances,
+                paths,
+                *next,
+                remaining_time - distance - 1,
+                new_visited,
+            );
         }
         paths.push(visited);
     }
 
-    dfs_recurse(&nodes, &distances, &mut paths, position, remaining_time, vec!());
+    dfs_recurse(
+        &nodes,
+        &distances,
+        &mut paths,
+        position,
+        remaining_time,
+        vec![],
+    );
     paths
 }
 
 #[derive(Default, Clone, Debug)]
-struct Valve{
-    flow_rate: usize, 
+struct Valve {
+    flow_rate: usize,
     neighbors: Vec<usize>,
-    position: usize
+    position: usize,
 }
 
 impl Valve {
     fn from(input: &String) -> Valve {
         let mut parts: Vec<&str> = input.split_whitespace().collect();
         let position = Valve::alpha_to_position(parts[1]);
-        let flow_rate = Some(parts[4]).and_then(|p| p.strip_prefix("rate=")).and_then(|p| p.strip_suffix(";")).and_then(|p| p.parse().ok()).unwrap();
-        let mut neighbors = vec!();
+        let flow_rate = Some(parts[4])
+            .and_then(|p| p.strip_prefix("rate="))
+            .and_then(|p| p.strip_suffix(";"))
+            .and_then(|p| p.parse().ok())
+            .unwrap();
+        let mut neighbors = vec![];
         for neighbor_alpha in parts[9..].iter() {
-            neighbors.push(Valve::alpha_to_position(neighbor_alpha.strip_suffix(",").unwrap_or(&neighbor_alpha)));
+            neighbors.push(Valve::alpha_to_position(
+                neighbor_alpha.strip_suffix(",").unwrap_or(&neighbor_alpha),
+            ));
         }
-        Valve { position, flow_rate, neighbors}
+        Valve {
+            position,
+            flow_rate,
+            neighbors,
+        }
     }
 
     fn alpha_to_position(alpha: &str) -> usize {
         let mut chars = alpha.chars();
-        ((26 * ((chars.next().unwrap() as isize) - ('A' as isize))) + ((chars.next().unwrap() as isize) - ('A' as isize))) as usize
+        ((26 * ((chars.next().unwrap() as isize) - ('A' as isize)))
+            + ((chars.next().unwrap() as isize) - ('A' as isize))) as usize
     }
 
     fn position_to_alpha(position: usize) -> String {
-        vec!(
+        vec![
             char::from(((position / 26) + 65) as u8),
             char::from(((position % 26) + 65) as u8),
-        ).iter().collect()
+        ]
+        .iter()
+        .collect()
     }
 }
 

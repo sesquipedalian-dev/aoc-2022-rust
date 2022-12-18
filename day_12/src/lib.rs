@@ -14,7 +14,7 @@ pub fn first(input: &[String]) -> usize {
 
 pub fn second(input: &[String]) -> usize {
     let (_, end, grid) = parse_input(&input);
-    // difference with the first is that the neighbor steps go in the other direction, 
+    // difference with the first is that the neighbor steps go in the other direction,
     // and we're at "the end" at any node that has 0 height
     // djikstras is always traversing the shortest path, so the first 'end' we find will be the minimum one
     djikstras(
