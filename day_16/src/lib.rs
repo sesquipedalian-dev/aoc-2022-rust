@@ -4,11 +4,11 @@ use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;
+use std::path;
+use itertools::Itertools;
 
 pub fn first(input: &[String]) -> usize {
     let mut nodes = parse_input(&input);
-    nodes.sort_by(|a, b| a.flow_rate.cmp(&b.flow_rate).reverse());
-    println!("sorted nodes by flow rate {:?}", nodes);
 
     let all_distances: HashMap<usize, HashMap<usize, usize>> = nodes
         .iter()
@@ -20,19 +20,73 @@ pub fn first(input: &[String]) -> usize {
             }
         })
         .collect();
-    println!(
-        "for each node, all shortest paths to other nodes {:?}",
-        all_distances
-    );
 
     let dfs_paths = dfs(&all_distances, &mut nodes, 0, 30);
-    println!("dfs paths {:?}", dfs_paths);
 
-    0
+    dfs_paths.iter().map(|path| path_score(path, 30, &all_distances, &nodes)).max().unwrap_or(0)
 }
 
 pub fn second(input: &[String]) -> usize {
-    0
+    let mut nodes = parse_input(&input);
+
+    let all_distances: HashMap<usize, HashMap<usize, usize>> = nodes
+        .iter()
+        .flat_map(|node| {
+            if node.neighbors.is_empty() {
+                None
+            } else {
+                Some((node.position, djikstras(node.position, &nodes)))
+            }
+        })
+        .collect();
+
+    let dfs_paths = dfs(&all_distances, &mut nodes, 0, 26);
+
+    dfs_paths.iter()
+        .combinations(2)
+        .filter(|items| {
+            items[0].iter().fold(true, |accum, next| { accum && !items[1].contains(next)})
+        })
+        .map(|items| {
+            path_score(items[0], 26, &all_distances, &nodes) +  path_score(items[1], 26, &all_distances, &nodes)
+        })
+        .max().unwrap_or(0)
+    
+
+    // paths = dfs("AA", 26)
+    // with Pool(cpu_count()) as p:
+    //     print(
+    //         max(
+    //             tqdm.tqdm(
+    //                 p.imap_unordered(pair_path_score, combinations(paths, 2), 1_000),
+    //                 total=len(paths) * (len(paths) - 1) / 2,
+    //             )
+    //         )
+    //     )
+    
+}
+
+
+// def path_score(path: List[str], t: int) -> int:
+//     score = 0
+//     for valve, next_valve in zip(["AA", *path], path):
+//         t -= distances[valve][next_valve] + 1
+//         score += t * rates[next_valve]
+
+//     return score
+fn path_score(path: &Vec<usize>, time_remaining: usize, distances: &HashMap<usize, HashMap<usize, usize>>, nodes: &Vec<Valve> ) -> usize {
+    let mut t = time_remaining;
+    let mut score = 0;
+    let mut last_i = 0;
+    for i in path.iter(){
+        // println!("distance from {} to {}", last_i, i);
+        t -= distances.get(&last_i).unwrap().get(&i).unwrap() + 1;
+        score += t * nodes[*i].flow_rate;
+
+        last_i = *i;
+    }
+
+    score
 }
 
 #[derive(PartialEq, Eq, Clone)]
@@ -68,7 +122,7 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> HashMap<usize, usize> {
     let mut distances: HashMap<usize, usize> =
         edges.iter().map(|valve| (valve.position, 99)).collect();
     distances.insert(start, 0);
-    println!("distances {:?}", distances);
+    // println!("distances {:?}", distances);
 
     // let mut previouses: HashMap<usize, usize> = HashMap::new(); // notate the path taken so we can later calculate the cost? maybe
 
@@ -79,11 +133,11 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> HashMap<usize, usize> {
     });
 
     while let Some(State { cost, position }) = unvisited.pop() {
-        println!(
-            "current node {} {}",
-            cost,
-            Valve::position_to_alpha(position)
-        );
+        // println!(
+        //     "current node {} {}",
+        //     cost,
+        //     Valve::position_to_alpha(position)
+        // );
 
         // // we've gone down a bad path
         // if cost > *distances.get(&position).unwrap() {
@@ -93,10 +147,10 @@ fn djikstras(start: usize, edges: &Vec<Valve>) -> HashMap<usize, usize> {
 
         // for each neighbor, see if we can find a way with a lower cost going through this node
         for neighbor in edges[position].neighbors.iter() {
-            println!(
-                "considering neighbor? {:?}",
-                Valve::position_to_alpha(*neighbor)
-            );
+            // println!(
+            //     "considering neighbor? {:?}",
+            //     Valve::position_to_alpha(*neighbor)
+            // );
             let next = State {
                 cost: cost + 1,
                 position: *neighbor,
@@ -132,28 +186,28 @@ fn dfs(
         visited: Vec<usize>,
     ) {
         if remaining_time <= 0 {
-            println!("out of time");
+            // println!("out of time");
             return;
         }
 
         for (next, distance) in distances.get(&position).unwrap().iter() {
             if nodes[*next].flow_rate == 0 {
                 // TODO oh darn we've messed up the vector / alpha mapping again somehow
-                println!(
-                    "skipping no flow rate sob {:?} {:?}",
-                    Valve::position_to_alpha(*next),
-                    nodes[*next]
-                );
+                // println!(
+                //     // "skipping no flow rate sob {:?} {:?}",
+                //     Valve::position_to_alpha(*next),
+                //     nodes[*next]
+                // );
                 continue;
             }
 
             if visited.contains(next) {
-                println!("skipping already visited");
+                // println!("skipping already visited");
                 continue;
             }
 
-            if remaining_time - distance - 1 <= 0 {
-                println!("skipping one we don't have time to get to");
+            if (distance + 1) >= remaining_time {
+                // println!("skipping one we don't have time to get to");
                 continue;
             }
 
@@ -283,6 +337,6 @@ mod tests {
     fn second_test() {
         let input = example();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 1707);
     }
 }
