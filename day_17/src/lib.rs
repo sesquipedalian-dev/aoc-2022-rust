@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 // this seems to be taking forever, there's gotta be a pattern that repeats at some point
 pub fn first(input: &[String]) -> isize {
-    const MAX_GENERATION: isize = 2022;
+    const MAX_GENERATION: isize = 100;
     // const MIN_X: isize = 0;
     // const MAX_X : isize = MIN_X + 6;
     // const MIN_Y: isize = -1;
@@ -29,7 +29,7 @@ pub fn first(input: &[String]) -> isize {
     let mut min_y = 0;
 
     for g in 0..MAX_GENERATION {
-        println!("Next generation {} {:?} {}", g, ys_state, min_y);
+        println!("Next generation {} {:?} {} {} {}", g, ys_state, min_y, rocks_iter, jets_iter);
         print_state(min_y, &ys_state);
 
         let memo_key = (ys_state.key(), rocks_iter, jets_iter);
@@ -49,7 +49,7 @@ pub fn first(input: &[String]) -> isize {
 
         min_y = min_y + min_y_delta;
         jets_iter = new_jet_index;
-        rocks_iter = rocks_iter + 1;
+        rocks_iter = (rocks_iter + 1) % rock_shapes.shapes.len() as isize;
         ys_state = new_max_ys;
     }
 
@@ -71,6 +71,7 @@ fn spawn_rock(max_ys: &MaxYs, shape: &RockShape, jet_index: isize, jets: &String
     let mut rock_loc = (2, max_ys.max() + 3);
     let mut next_command = Command::PushedByJet(jet_index);
     loop {
+        // println!("iterating rock {}", rock_loc);
         // move the rock
         let (new_command, new_rock_loc) = next_command.next(jets, rock_loc);
         let intersect = shape.intersect(new_rock_loc.0, new_rock_loc.1, &grid);
@@ -86,7 +87,7 @@ fn spawn_rock(max_ys: &MaxYs, shape: &RockShape, jet_index: isize, jets: &String
         };
         // println!("should move? {}", should_move);
         if should_move {
-                // println!("move from {:?} to {:?}", rock_loc, new_rock_loc);
+                println!("move from {:?} to {:?}", rock_loc, new_rock_loc);
             rock_loc = new_rock_loc;
         }
         next_command = new_command;
@@ -118,7 +119,7 @@ impl Command {
     fn next(&self, jets: &String, pair: (isize, isize)) -> (Command, (isize, isize)) {
         match self {
             Command::PushedByJet(index) => {
-                // println!("Pushed by Jet! {:?}", jets.chars().nth(*index));
+                println!("Pushed by Jet! {:?}", jets.chars().nth(*index as usize));
                 let new_pair = match jets.chars().nth(*index as usize) {
                     Some('>') => (pair.0 + 1, pair.1),
                     Some('<') => (pair.0 - 1, pair.1),
@@ -127,7 +128,7 @@ impl Command {
                 (Command::FallingDown((*index + 1) % jets.len() as isize), new_pair)
             }
             Command::FallingDown(index) => {
-                // println!("Fall down");
+                println!("Fall down");
                 (Command::PushedByJet(*index), (pair.0, pair.1 - 1))
             }
         }
@@ -229,6 +230,11 @@ fn print_state(min_y: isize, max_ys: &MaxYs) {
     println!();
 }
 
+// TODO so the problem is that a vertical line tried to scoot under the max_y, 
+// but in the real model there are rocks under there.  By just getting the max Y 
+// we're losing information. 
+// Really we need everything above the min Y to be represented.
+//
 #[derive(Debug)]
 struct MaxYs {
     maxes: [isize; 7]
