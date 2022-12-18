@@ -30,7 +30,7 @@ pub fn first(input: &[String]) -> isize {
 
     for g in 0..MAX_GENERATION {
         println!("Next generation {} {:?} {}", g, ys_state, min_y);
-        // print_state(min_y, &ys_state);
+        print_state(min_y, &ys_state);
 
         let memo_key = (ys_state.key(), rocks_iter, jets_iter);
         let memo_value = memo.get(&memo_key);
