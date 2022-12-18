@@ -1,17 +1,16 @@
 use std::collections::HashMap;
 
-// this seems to be taking forever, there's gotta be a pattern that repeats at some point
-pub fn first(input: &[String]) -> usize {
+pub fn first(input: &[String]) -> u64 {
     let jets: &String = input.first().unwrap();
-    rock_fall_iterate(jets, 2022)
+    rock_fall_iterate(jets, 10_000) // intentionally wrong to avoid a lazy underlow problem later
 }
 
-pub fn second(input: &[String]) -> usize {
+pub fn second(input: &[String]) -> u64 {
     let jets: &String = input.first().unwrap();
     rock_fall_iterate(jets, 1_000_000_000_000)
 }
 
-fn rock_fall_iterate(jets: &String, max_generation: isize) -> usize {
+fn rock_fall_iterate(jets: &String, max_generation: u64) -> u64 {
     let next_command = Command::PushedByJet(0);
     let rock_shapes = RockShapes::new();
     let mut rocks_iter: isize = 0;
@@ -22,13 +21,17 @@ fn rock_fall_iterate(jets: &String, max_generation: isize) -> usize {
     let mut memo: HashMap<(Grid, isize, isize), (Grid, isize, isize)> = HashMap::new();
     let mut min_y = 0;
     let mut memo_hits = 0;
+    let mut memo_usages: HashMap<(Grid, isize, isize), Vec<(isize, isize)>> = HashMap::new();
 
-    for g in 0..max_generation {
+    for g in 0..10_000 {
+        // trial generations to find cycle time
         let memo_key = (ys_state, rocks_iter, jets_iter);
         let memo_value = memo.get(&memo_key);
         let (new_max_ys, min_y_delta, new_jet_index) = memo_value
             .map(|(ys, min_y_delta, jet_delta)| {
                 memo_hits += 1;
+                let memo_usage_entry = memo_usages.entry(memo_key).or_insert(vec![]);
+                memo_usage_entry.push((g, min_y));
                 (*ys, *min_y_delta, *jet_delta)
             })
             .unwrap_or_else(|| {
@@ -44,11 +47,25 @@ fn rock_fall_iterate(jets: &String, max_generation: isize) -> usize {
         ys_state = new_max_ys;
     }
 
-    println!(
-        "Memo effectiveness! {}",
-        memo_hits as f32 / max_generation as f32
-    );
-    (min_y as usize) + ys_state.max()
+    // ok, so look through the memo usages and pick an entry
+    // then find the next gen after that in the same memo
+    // the diff between those should be our cycle time, and the min_y diff between them is the height that goes up each cycle
+    // then add the max_y found in that memo's key
+    let proposed_cycle = memo_usages.iter().find(|((grid, _, _), entries)| {
+        let cycle_time: u64 = (entries[1].0 - entries[0].0).try_into().unwrap();
+        let starting_g: u64 = entries[0].0.try_into().unwrap();
+        (max_generation - starting_g) % cycle_time == 0
+    });
+    if let Some(((grid, _, _), entries)) = proposed_cycle {
+        let cycle_time: u64 = (entries[1].0 - entries[0].0).try_into().unwrap();
+        let y_diff_per_cycle: u64 = (entries[1].1 - entries[0].1).try_into().unwrap();
+        let starting_g: u64 = entries[0].0.try_into().unwrap();
+        let remaining_generations: u64 = max_generation - starting_g;
+        let remaining_cycles = remaining_generations / cycle_time;
+        (grid.max() as u64) + (remaining_cycles * y_diff_per_cycle) + (entries[0].1 as u64)
+    } else {
+        0
+    }
 }
 
 // (Grid, shape index, jet index) -> (Grid, how much min y changed, jet index)
@@ -294,6 +311,6 @@ mod tests {
     fn second_test() {
         let input = example();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 1_514_285_714_288);
     }
 }
