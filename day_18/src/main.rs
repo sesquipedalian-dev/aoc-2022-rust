@@ -6,6 +6,6 @@ fn main() -> Result<(), Error> {
     println!("Using puzzle input {:?}", input);
 
     println!("First output: {}", first(&input));
-    println!("Second output: {}", second(&input));
+    println!("Second output: {}", second(&input)); // 3186 is too high
     Ok(())
 }
