@@ -90,7 +90,7 @@ pub fn second(input: &[String]) -> usize {
     //
     // building on that idea, we could 'grow' potential internal voids by increasing its size until we hit
     // 'air' (outside the max bounds of the shape) or a voxel.  If the growing internal shape never hits air
-    // then it should subtract
+    // then its faces that intersect with the shape would be the interior surface area. 
     //
 
     let mut facet_counts: HashMap<BTreeSet<(usize, usize, usize)>, usize> = HashMap::new();
