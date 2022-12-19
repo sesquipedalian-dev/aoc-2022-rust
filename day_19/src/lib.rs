@@ -31,24 +31,26 @@ fn max_geodes_for_blueprint(blueprint: &Blueprint) -> usize {
     let mut seen_states = HashSet::new();
 
     // I don't think this is really going depth-first
-    let mut unvisited: BinaryHeap<State> = BinaryHeap::new();
-    unvisited.push(State{ore: 0, clay: 0, obsidian: 0, geode: 0, ore_delta: 1, clay_delta: 0, obsidian_delta: 0, geode_delta: 0, steps_remaining: 24});
-    while let Some(state @ State{ore, clay, obsidian, geode, ore_delta, clay_delta, obsidian_delta, geode_delta, steps_remaining}) = unvisited.pop() {
-        if seen_states.contains(&state) || (max_geodes > 1 && geode < (max_geodes - 1)) {
+    let mut visited = 0;
+    // let mut unvisited: BinaryHeap<State> = BinaryHeap::new();
+    let mut unvisited: Vec<State> = Vec::new();
+    unvisited.push(State{ore: 0, clay: 0, obsidian: 0, geode: 0, ore_delta: 1, clay_delta: 0, obsidian_delta: 0, geode_delta: 0, steps_remaining: 24, ore_skipped: false, clay_skipped: false, obsidian_skipped: false});
+    while let Some(state @ State{ore, clay, obsidian, geode, ore_delta, clay_delta, obsidian_delta, geode_delta, steps_remaining, ore_skipped, clay_skipped, obsidian_skipped}) = unvisited.pop() {
+        if seen_states.contains(&state) {
             continue;
         }
 
-        // visited += 1;
+        visited += 1;
         max_geodes = max_geodes.max(geode);
-        println!("visited & max geodes {} {} {:?}", 0, max_geodes, state);
+        println!("visited & max geodes {} {} {:?}", visited, max_geodes, state);
 
         seen_states.insert(state.clone());
         if state.steps_remaining == 0 {
             continue;
         }
         
-        // all resource increase by deltas
-        let new_state = State{
+        // in the next state, all resource increase by deltas
+        let mut new_state = State{
             ore: ore + ore_delta,
             clay: clay + clay_delta,
             obsidian: obsidian + obsidian_delta,
@@ -58,51 +60,77 @@ fn max_geodes_for_blueprint(blueprint: &Blueprint) -> usize {
         };
 
         // what can we do each time step? 
-
-        // we could do nothing
-        unvisited.push(new_state);
-
-        // if we have enough resources we could increase the delta of some resource
-        if state.ore >= blueprint.ore_bot_ore_cost {
-            let state = State{
-                ore: new_state.ore - blueprint.ore_bot_ore_cost,
-                ore_delta: state.ore_delta + 1,
-                .. new_state
-            };
-            unvisited.push(state);
-        }
-
-        if state.ore >= blueprint.clay_bot_ore_cost {
-            let state = State{
-                ore: new_state.ore - blueprint.clay_bot_ore_cost,
-                clay_delta: state.clay_delta + 1,
-                .. new_state
-            };
-            unvisited.push(state);
-        }
-
-        if state.ore >= blueprint.obsidian_bot_ore_cost && state.clay >= blueprint.obsidian_bot_clay_cost {
-            let state = State{
-                ore: new_state.ore - blueprint.obsidian_bot_ore_cost,
-                clay: new_state.clay - blueprint.obsidian_bot_clay_cost,
-                obsidian_delta: state.obsidian_delta + 1,
-                .. new_state
-            };
-            unvisited.push(state);
-        }
-
-        if state.ore >= blueprint.geode_bot_ore_cost && state.obsidian >= blueprint.geode_bot_obsidian_cost {
+        // according to an answer on the solutions thread: https://www.reddit.com/r/adventofcode/comments/zpihwi/2022_day_19_solutions/j0u4fwu/
+        // If you can a build a geode robot, you should, so no need to explore other possibilities in that case. (I'm actually not completely sure about this one, but it works with the test case and my input, so...)
+        if ore >= blueprint.geode_bot_ore_cost && obsidian >= blueprint.geode_bot_obsidian_cost {
             let state = State{
                 ore: new_state.ore - blueprint.geode_bot_ore_cost,
                 obsidian: new_state.obsidian - blueprint.geode_bot_obsidian_cost,
                 geode_delta: state.geode_delta + 1,
+                ore_skipped: false,
+                clay_skipped: false,
+                obsidian_skipped: false,
+                .. new_state
+            };
+            unvisited.push(state);
+            continue
+        }
+
+        // You should not build a robot if you have already the number required to produce the amount of resource needed to build any robot in a turn
+        // If you can build all types of robots, you must build one
+        // And finally, if you skip building a robot when you can, you should not build it until you have build another one.
+
+        // if we have enough resources we could increase the delta of some resource
+        let can_build_ore = !ore_skipped && ore_delta < blueprint.max_ore_cost && ore >= blueprint.ore_bot_ore_cost;
+        if can_build_ore {
+            let state = State{
+                ore: new_state.ore - blueprint.ore_bot_ore_cost,
+                ore_delta: state.ore_delta + 1,
+                ore_skipped: false,
+                clay_skipped: false,
+                obsidian_skipped: false,
                 .. new_state
             };
             unvisited.push(state);
         }
+
+        let can_build_clay = !clay_skipped && clay_delta < blueprint.obsidian_bot_clay_cost && ore >= blueprint.clay_bot_ore_cost;
+        if can_build_clay {
+            let state = State{
+                ore: new_state.ore - blueprint.clay_bot_ore_cost,
+                clay_delta: state.clay_delta + 1,
+                ore_skipped: false,
+                clay_skipped: false,
+                obsidian_skipped: false,
+                .. new_state
+            };
+            unvisited.push(state);
+        }
+
+        let can_build_obsidian = !obsidian_skipped && obsidian_delta < blueprint.geode_bot_obsidian_cost && ore >= blueprint.obsidian_bot_ore_cost && clay >= blueprint.obsidian_bot_clay_cost;
+        if can_build_obsidian {
+            let state = State{
+                ore: new_state.ore - blueprint.obsidian_bot_ore_cost,
+                clay: new_state.clay - blueprint.obsidian_bot_clay_cost,
+                obsidian_delta: state.obsidian_delta + 1,
+                ore_skipped: false,
+                clay_skipped: false,
+                obsidian_skipped: false,
+                .. new_state
+            };
+            unvisited.push(state);
+        }
+
+        // we could do nothing
+        if !can_build_ore || !can_build_clay ||!can_build_obsidian {
+            new_state.ore_skipped = can_build_ore;
+            new_state.clay_skipped = can_build_clay;
+            new_state.obsidian_skipped = can_build_obsidian;
+            unvisited.push(new_state);
+        }
     }
     
-    println!("visited & max geodes {} {}", 0, max_geodes);
+    println!("visited & max geodes {} {}", visited, max_geodes);
     max_geodes
 }
 
@@ -116,7 +144,10 @@ struct State {
     clay_delta:usize, 
     obsidian_delta: usize,
     geode_delta: usize,
-    steps_remaining: usize
+    steps_remaining: usize,
+    ore_skipped: bool,
+    clay_skipped: bool,
+    obsidian_skipped: bool,
 }
 
 
@@ -156,19 +187,23 @@ pub struct Blueprint{
     obsidian_bot_clay_cost: usize, 
     geode_bot_ore_cost: usize, 
     geode_bot_obsidian_cost: usize,
+    max_ore_cost: usize
 }
 
 fn parse_input(input : &[String]) -> Vec<Blueprint> {
     input.iter().map(|input| { 
         let mut parts = input.split_whitespace();
-        Blueprint{
+        let mut result = Blueprint{
             ore_bot_ore_cost: parts.nth(6).unwrap().parse().unwrap(), 
             clay_bot_ore_cost: parts.nth(5).unwrap().parse().unwrap(), 
             obsidian_bot_ore_cost: parts.nth(5).unwrap().parse().unwrap(), 
             obsidian_bot_clay_cost: parts.nth(2).unwrap().parse().unwrap(), 
             geode_bot_ore_cost: parts.nth(5).unwrap().parse().unwrap(), 
             geode_bot_obsidian_cost: parts.nth(2).unwrap().parse().unwrap(),
-        }
+            max_ore_cost: 0,
+        };
+        result.max_ore_cost = result.ore_bot_ore_cost.max(result.clay_bot_ore_cost).max(result.obsidian_bot_ore_cost).max(result.geode_bot_ore_cost);
+        result
     }).collect()
 }
 
@@ -192,6 +227,7 @@ mod tests {
             obsidian_bot_clay_cost: 14, 
             geode_bot_ore_cost: 2, 
             geode_bot_obsidian_cost: 7,
+            max_ore_cost: 4,
         };
         let blueprint2 = Blueprint{
             ore_bot_ore_cost: 2, 
@@ -200,6 +236,7 @@ mod tests {
             obsidian_bot_clay_cost: 8, 
             geode_bot_ore_cost: 3, 
             geode_bot_obsidian_cost: 12,
+            max_ore_cost:  3,
         };
         vec!(blueprint1, blueprint2)
     }
