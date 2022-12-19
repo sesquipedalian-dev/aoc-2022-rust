@@ -3,12 +3,14 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 use std::collections::VecDeque;
 
-pub fn first(blueprints: &Vec<Blueprint>) -> usize {
+pub fn first(input: &[String]) -> usize {
     // so looking at someone else's solution
     // - it's always worth building the lowest 'level' robot that we can
     // - if a path has fewer geodes than the best seen geode path - 1, then we can prune that branch
     // - memoize on seen states
     //
+
+    let blueprints = parse_input(&input);
     blueprints.iter().enumerate().fold(0, |accum, (i, next)| {
         accum + ((i + 1) * max_geodes_for_blueprint(next))
     })
@@ -111,7 +113,7 @@ struct State {
 
 // list indexed by resource type to produce an additional delta of that resource, 
 // where the resource list is indexed by resource type to the amount of that resource needed
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Blueprint{
     pub resource_needs: Vec<Vec<usize>>
 }
@@ -122,19 +124,33 @@ impl Blueprint {
     }
 }
 
+fn parse_input(input : &[String]) -> Vec<Blueprint> {
+    input.iter().map(|input| { 
+        let mut parts = input.split_whitespace();
+        Blueprint{
+            resource_needs: vec!(
+                vec!(parts.nth(6).unwrap().parse().unwrap(), 0, 0 ,0), 
+                vec!(parts.nth(5).unwrap().parse().unwrap(), 0, 0, 0),
+                vec!(parts.nth(5).unwrap().parse().unwrap(), parts.nth(2).unwrap().parse().unwrap(), 0, 0),
+                vec!(parts.nth(5).unwrap().parse().unwrap(), 0, parts.nth(2).unwrap().parse().unwrap(), 0),
+            )
+        }
+    }).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    // fn example() -> Vec<String> {
-    //     let input: Vec<&str> = vec![
-    //         "Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.",
-    //         "Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian.",
-    //     ];
-    //     input.iter().map(|s: &&str| String::from(*s)).collect()
-    // }
+    fn example() -> Vec<String> {
+        let input: Vec<&str> = vec![
+            "Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.",
+            "Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian.",
+        ];
+        input.iter().map(|s: &&str| String::from(*s)).collect()
+    }
 
-    fn example() -> Vec<Blueprint> {    
+    fn example_parsed() -> Vec<Blueprint> {    
         let blueprint1 = Blueprint{
             resource_needs: vec!(
                 vec!(4, 0, 0 ,0), 
@@ -152,6 +168,14 @@ mod tests {
             )
         };
         vec!(blueprint1, blueprint2)
+    }
+
+    #[test]
+    fn test_parse_input() {
+        let input = example(); 
+        let parsed = parse_input(&input); 
+        assert_eq!(parsed[0], example_parsed()[0]);
+        assert_eq!(parsed[1], example_parsed()[1]);
     }
 
     #[test]
