@@ -11,7 +11,15 @@ pub fn first(input: &[String]) -> usize {
 }
 
 pub fn second(input: &[String]) -> usize {
-    0
+    let blueprints = parse_input(&input);
+    blueprints.iter().enumerate().map(|(i, next)| {
+        let mut memo: HashMap<State, usize> = HashMap::new();
+        // let new_state = State{ ore: 3, clay: 15, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 6, obsidian_delta: 0, geode_delta: 0, time_remaining: 20 };
+        let new_state = State{time_remaining: 32, .. State::new()};
+        let value = maximize(new_state, next, &mut memo);
+        println!("value for i {} {}", i, value);
+        value
+    }).reduce(|a, b| a * b).unwrap_or(0)
 }
 
 // Top down recursive dynamic programming, with memoization. For each subproblem, I go through the 4 possible bots I want to make
@@ -37,6 +45,7 @@ fn maximize(
     memo: &mut HashMap<State, usize>,
 ) -> usize {
     if time_remaining == 0 {
+        memo.insert(state, geode);
         return geode;
     }
 
@@ -142,8 +151,13 @@ fn maximize(
         (0, State::new())
     };
 
-    let (make_clay_bot, make_clay_state) = if clay < blueprint.obsidian_bot_clay_cost
-        && clay_delta < blueprint.obsidian_bot_clay_cost
+//     (an obsidian bot) was the best way to go from State { ore: 3, clay: 15, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 6, obsidian_delta: 0, geode_delta: 0, time_remaining: 20 } to State { ore: 2, clay: 7, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 6, obsidian_delta: 1, geode_delta: 0, time_remaining: 19 }
+// **** geode bot score: 0 to go to State { ore: 0, clay: 0, obsidian: 0, geode: 0, ore_delta: 1, clay_delta: 0, obsidian_delta: 0, geode_delta: 0, time_remaining: 24 }
+// **** obsidian bot score: 54 to go to State { ore: 2, clay: 7, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 6, obsidian_delta: 1, geode_delta: 0, time_remaining: 19 }
+// **** clay bot score: 0 to go to State { ore: 0, clay: 0, obsidian: 0, geode: 0, ore_delta: 1, clay_delta: 0, obsidian_delta: 0, geode_delta: 0, time_remaining: 24 }
+// **** ore bot score: 50 to go to State { ore: 3, clay: 27, obsidian: 0, geode: 0, ore_delta: 3, clay_delta: 6, obsidian_delta: 0, geode_delta: 0, time_remaining: 18 }
+
+    let (make_clay_bot, make_clay_state) = if clay_delta < blueprint.obsidian_bot_clay_cost
     {
         let cost = if ore >= blueprint.clay_bot_ore_cost {
             0
@@ -157,7 +171,10 @@ fn maximize(
         } else {
             turns_to_make
         };
-        if time_remaining >= turns_to_make {
+
+        // there's some relation between clay we have, clay delta, and remaining turns
+        // such that adding a clay bot now changes how many future obsidian bots we can make
+        if time_remaining >= (turns_to_make + blueprint.obsidian_bot_clay_cost) {
             let new_state = State {
                 time_remaining: time_remaining - turns_to_make,
                 clay_delta: clay_delta + 1,
@@ -219,44 +236,45 @@ fn maximize(
     .iter()
     .max()
     .unwrap();
-    // let (the_best_thing_to_do, to_state) = if best == make_geode_bot {
-    //     ("a geode bot", make_geode_state)
-    // } else if best == make_obsidian_bot {
-    //     ("an obsidian bot", make_obsidian_state)
-    // } else if best == make_clay_bot {
-    //     ("a clay bot", make_clay_state)
-    // } else if best == make_ore_bot {
-    //     ("an ore bot", make_ore_state)
-    // } else {
-    //     ("", State::new())
-    // };
+    let (the_best_thing_to_do, to_state) = if best == make_geode_bot {
+        ("a geode bot", make_geode_state)
+    } else if best == make_obsidian_bot {
+        ("an obsidian bot", make_obsidian_state)
+    } else if best == make_clay_bot {
+        ("a clay bot", make_clay_state)
+    } else if best == make_ore_bot {
+        ("an ore bot", make_ore_state)
+    } else {
+        ("", State::new())
+    };
 
-    // if best is still 0, none of the other options had enough time.
-    // so just wait to make more geodes
-    // println!(
-    //     "({}) was the best way to go from {:?} to {:?}",
-    //     the_best_thing_to_do, state, to_state
-    // );
-    // println!(
-    //     "**** geode bot score: {} to go to {:?}",
-    //     make_geode_bot, make_geode_state
-    // );
-    // println!(
-    //     "**** obsidian bot score: {} to go to {:?}",
-    //     make_obsidian_bot, make_obsidian_state
-    // );
-    // println!(
-    //     "**** clay bot score: {} to go to {:?}",
-    //     make_clay_bot, make_clay_state
-    // );
-    // println!(
-    //     "**** ore bot score: {} to go to {:?}",
-    //     make_ore_bot, make_ore_state
-    // );
-    // println!();
+    // FROM HERE the paths diverge - counts obsidian bot and clay bot equally
+// (an obsidian bot) was the best way to go from State { ore: 3, clay: 10, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 5, obsidian_delta: 0, geode_delta: 0, time_remaining: 21 } to State { ore: 4, clay: 6, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 5, obsidian_delta: 1, geode_delta: 0, time_remaining: 19 }
+// 
+    println!(
+        "({}) was the best way to go from {:?} to {:?}",
+        the_best_thing_to_do, state, to_state
+    );
+    println!(
+        "**** geode bot score: {} to go to {:?}",
+        make_geode_bot, make_geode_state
+    );
+    println!(
+        "**** obsidian bot score: {} to go to {:?}",
+        make_obsidian_bot, make_obsidian_state
+    );
+    println!(
+        "**** clay bot score: {} to go to {:?}",
+        make_clay_bot, make_clay_state
+    );
+    println!(
+        "**** ore bot score: {} to go to {:?}",
+        make_ore_bot, make_ore_state
+    );
+    println!();
     if best == 0 && geode_delta > 0 {
         // println!("Visited a waiting for geodes node {:?}", state);
-        // println!("best thing to do was wait it out");
+        println!("best thing to do was wait it out");
         geode + geode_delta * time_remaining
     } else {
         // println!("{}", the_best_thing_to_do);
@@ -382,17 +400,17 @@ mod tests {
         assert_eq!(parsed[1], example_parsed()[1]);
     }
 
-    #[test]
-    fn first_test() {
-        let input = example();
-        let result = first(&input);
-        assert_eq!(result, 33);
-    }
-
     // #[test]
-    // fn second_test() {
+    // fn first_test() {
     //     let input = example();
-    //     let result = second(&input);
-    //     assert_eq!(result, 0);
+    //     let result = first(&input);
+    //     assert_eq!(result, 33);
     // }
+
+    #[test]
+    fn second_test() {
+        let input = example();
+        let result = second(&input);
+        assert_eq!(result, 56 * 62);
+    }
 }
