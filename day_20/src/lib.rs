@@ -43,12 +43,6 @@ pub fn first(input: &[String]) -> i32 {
         }
 
         let moving_right = current.val < 0;
-        
-        // this is not right
-        if i == circular_list_head_i {
-            circular_list_head_i = circular_list_nodes[i].next;
-        }
-
         for _ in 0..(current.val.abs() as usize) { // move as many times as the value specified
             // moving left is the same as moving our previous right
             let current_i = if moving_right {
@@ -77,31 +71,33 @@ pub fn first(input: &[String]) -> i32 {
         }
     }
 
-            // print
-            let mut current_i = circular_list_head_i;
-            for _ in 0..input.len() {
-                print!("{}, ", circular_list_nodes[current_i].val);
-                current_i = circular_list_nodes[current_i].next;
-            }
-            println!();
+            // // print
+            // let mut current_i = circular_list_head_i;
+            // for _ in 0..input.len() {
+            //     print!("{}, ", circular_list_nodes[current_i].val);
+            //     current_i = circular_list_nodes[current_i].next;
+            // }
+            // println!();
 
     // get the items in question
     // find index of 0
-    let mut i = 0;
-    while circular_list_nodes[i].val != 0 {
-        i = circular_list_nodes[i].next;
+    // let mut i = 0;
+    while circular_list_nodes[circular_list_head_i].val != 0 {
+        circular_list_head_i = circular_list_nodes[circular_list_head_i].next;
     }
-    println!("location of 0: {}", i);
+    // println!("location of 0: {}", i);
 
-    vec!(1000 + i, 2000 + i, 3000 + i).iter().map(|nth| {
-        let nth = nth % input.len() ;
-        let mut head = circular_list_head_i;
-        for _ in 0..nth {
-            head = circular_list_nodes[head].next;
+    let mut sum = 0;
+    for i in 0..=3000 {
+        
+        let current_item = circular_list_nodes[circular_list_head_i];
+        if i == 1000 || i == 2000 || i == 3000 {
+            println!("nth item? {} {}", i , current_item.val);
+            sum += current_item.val;
         }
-        println!("nth item? {} {}", nth, circular_list_nodes[head].val);
-        circular_list_nodes[head].val
-    }).reduce(|a, b| a + b).unwrap_or(0)
+        circular_list_head_i = current_item.next;
+    }
+    sum
 }
 
 pub fn second(input: &[String]) -> usize {
