@@ -79,6 +79,29 @@ pub fn first(input: &[String]) -> isize {
 }
 
 pub fn second(input: &[String]) -> usize {
+    // ok, so now when parsing our input we can find the size of an edge of the cube
+    // by looking for when the offset / len first changes - that should give us the x * x size of a side
+    // then we can change the wrapping rules for the part of the input representing each side as we go along
+    // 
+    // construct a cube map with a side in the center and its 4 neighbors: 
+    //
+    // >>11>>
+    // ^ 11 v
+    // 223344
+    // 223344
+    // ^ 55 v
+    // <<55<<
+    //    +
+    //   66
+    //   66
+    // 
+    // this would involve rotating the indices of some of these neighbors
+    // then the other edges that don't go +1 in two directions are backwards
+    // for example 
+    //
+    //   6d6c
+    //   ^^^^
+    //   1a1b
     0
 }
 
@@ -182,19 +205,43 @@ mod tests {
 
     fn example() -> Vec<String> {
         let input: Vec<&str> = vec![
-            "        ...#     ",
-            "        .#..     ",
-            "        #...     ",
-            "        ....     ",
-            "...#.......#     ",
-            "........#...     ",
-            "..#....#....     ",
-            "..........#.     ",
+            "        ...#    ",
+            "        .#..    ",
+            "        #...    ",
+            "        ....    ",
+            "...#.......#    ",
+            "........#...    ",
+            "..#....#....    ",
+            "..........#.    ",
             "        ...#....",
             "        .....#..",
             "        .#......",
             "        ......#.",
             "",
+            "10R5L5R10L4R5L5",
+        ];
+        input.iter().map(|s: &&str| String::from(*s)).collect()
+    }
+
+    // rotating example() to match the flattened cube structure of my part 2 input
+    fn example_rot_for_2() -> Vec<String> { 
+        let input: Vec<&str> = vec![
+            "    .....#..",
+            "    .#....#.",
+            "    ........",
+            "    #.......",
+            "    ...#",
+            "    .#..",
+            "    #...",
+            "    ....",
+            ".......#",
+            "....#...",
+            "........",
+            "...#..#.",
+            "....",
+            ".#..",
+            "....",
+            "...#",
             "10R5L5R10L4R5L5",
         ];
         input.iter().map(|s: &&str| String::from(*s)).collect()
