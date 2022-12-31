@@ -3,327 +3,192 @@ use std::collections::HashMap;
 pub fn first(input: &[String]) -> usize {
     let blueprints = parse_input(&input);
     blueprints.iter().enumerate().fold(0, |accum, (i, next)| {
-        let mut memo: HashMap<State, usize> = HashMap::new();
-        let value = maximize(State::new(), next, &mut memo);
+        let value = maximize(next, 24);
         println!("value for i {} {}", i, value);
         accum + ((i + 1) * value)
     })
 }
 
-pub fn second(input: &[String]) -> usize {
+pub fn second(input: &[String]) -> u128 {
     let blueprints = parse_input(&input);
-    blueprints.iter().enumerate().map(|(i, next)| {
-        let mut memo: HashMap<State, usize> = HashMap::new();
-        // let new_state = State{ ore: 3, clay: 15, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 6, obsidian_delta: 0, geode_delta: 0, time_remaining: 20 };
-        let new_state = State{time_remaining: 32, .. State::new()};
-        let value = maximize(new_state, next, &mut memo);
+    blueprints.iter().enumerate().take(3).map(|(i, next)| {
+        let value = maximize(next, 32);
         println!("value for i {} {}", i, value);
-        value
+        value as u128
     }).reduce(|a, b| a * b).unwrap_or(0)
 }
 
-// Top down recursive dynamic programming, with memoization. For each subproblem, I go through the 4 possible bots I want to make
-// (regardless of whether I can currently afford it), then move to the subproblem which represent waiting x units of time until I can build it,
-// then build it.
-// To optimise, I stopped building ore/clay bots if I'm currently producing more than I could ever need
-// (producing at least the max cost of the bots).
-// qqI also didn't build bots if there was too little time left to yield benefit from them, e.g. building clay bots with fewer than 6 minutes left is pointless.
-//
-fn maximize(
-    state @ State {
-        ore,
-        clay,
-        obsidian,
-        geode,
-        ore_delta,
-        clay_delta,
-        obsidian_delta,
-        geode_delta,
-        time_remaining,
-    }: State,
-    blueprint: &Blueprint,
-    memo: &mut HashMap<State, usize>,
-) -> usize {
-    if time_remaining == 0 {
-        memo.insert(state, geode);
-        return geode;
+// not really factorial?
+fn factorial(n: usize) -> usize { 
+    if n == 0 { 
+        return 0
+    }
+    if n == 1 {
+        return 1
     }
 
-    if let Some(memoized) = memo.get(&state) {
-        return *memoized;
-    }
+    n + factorial(n-1)
+}
+fn maximize(blueprint: &Blueprint, max_time: usize) -> usize { 
+    // borrowing from these heuristics: 
+    // https://www.reddit.com/r/adventofcode/comments/zpihwi/2022_day_19_solutions/j1vj08v/
+    // and their pastebin: https://pastebin.com/5dBc0hRD
+    // Trimmed the search space by stopping all robot production at the max number of resources needed to build one bot. 
+    // Also trimmed paths which had a theoretical production less than the current max. 
+    // The theoretical production was the current amount of geodes, 
+    // plus all that could be produced with the current number of geode bots, 
+    // and the possible geodes that could be produced if a geode bot was made for every remaining minute. 
+    // The comparing the max possible geode production drastically cut run times down. From 25s to 8s for part 1, and allowed part 2 to run in 27 seconds.
+    // My algorithm decide which bot to make next from all possibilities, and just waited the amount of time to make that bot for each possible bot.
+    //
 
-    let (make_geode_bot, make_geode_state) = if obsidian_delta > 0 {
-        let obsidian_cost = if obsidian >= blueprint.geode_bot_obsidian_cost {
-            0
-        } else {
-            blueprint.geode_bot_obsidian_cost - obsidian
-        };
-        let min_turns_for_enough_obsidian = obsidian_cost / obsidian_delta;
-        let min_turns_for_enough_obsidian = if obsidian_cost % obsidian_delta == 0 {
-            min_turns_for_enough_obsidian
-        } else {
-            min_turns_for_enough_obsidian + 1
-        };
+    let mut queue: Vec<State> = vec!(State::new(max_time));
+    let mut current_max = 0; // keep track of the best branch we've seen
 
-        let ore_cost = if ore >= blueprint.geode_bot_ore_cost {
-            0
-        } else {
-            blueprint.geode_bot_ore_cost - ore
-        };
-        let min_turns_for_enough_ore = ore_cost / ore_delta;
-        let min_turns_for_enough_ore = if ore_cost % ore_delta == 0 {
-            min_turns_for_enough_ore
-        } else {
-            min_turns_for_enough_ore + 1
-        };
-
-        let turns_to_make = min_turns_for_enough_obsidian.max(min_turns_for_enough_ore) + 1; // +1 to build
-        if time_remaining > turns_to_make {
-            let new_state = State {
-                time_remaining: time_remaining - turns_to_make,
-                geode_delta: geode_delta + 1,
-                ore: ore + ore_delta * turns_to_make - blueprint.geode_bot_ore_cost,
-                obsidian: obsidian + obsidian_delta * turns_to_make
-                    - blueprint.geode_bot_obsidian_cost,
-                clay: clay + clay_delta * turns_to_make,
-                geode: geode + geode_delta * turns_to_make,
-                ..state
-            };
-
-            // println!("1 From {:?} to {:?}", state, new_state);
-            (maximize(new_state, &blueprint, memo), new_state)
-        } else {
-            (0, State::new())
+    while let Some(State{resources, deltas, time_remaining}) = queue.pop() {
+        // println!("Visiting state {} {:?} {:?} {:?}", current_max, resources, deltas, time_remaining);
+        // Visiting state 55 ResourceVec([6, 63, 9, 32]) ResourceVec([2, 7, 5, 7]) 3
+        // The theoretical production was the current amount of geodes, 
+        // plus all that could be produced with the current number of geode bots, 
+        // and the possible geodes that could be produced if a geode bot was made for every remaining minute. 
+        let res_part = resources.at(&ResourceType::Geode); // 32
+        let delts_part = (deltas.at(&ResourceType::Geode) * time_remaining); // 7 * 3 = 21   53
+        let additional_bots_part = factorial(time_remaining - 1);
+        let theoretical_max_geode = res_part + delts_part + additional_bots_part;
+            // + ((time_remaining - 1) * (time_remaining / 2))  // 2 * 1 = 2 = 55
+            // ;
+        if theoretical_max_geode <= current_max {
+            // println!("Bailling, not better than current max {} {} {} {} {} {} {}", theoretical_max_geode, current_max, time_remaining - 1, time_remaining / 2,
+                // res_part, delts_part, additional_bots_part
+            // );
+            continue;
         }
-    } else {
-        (0, State::new())
-    };
 
-    let (make_obsidian_bot, make_obsidian_state) = if clay_delta > 0
-        && obsidian < blueprint.geode_bot_obsidian_cost
-        && obsidian_delta < blueprint.geode_bot_obsidian_cost
-    {
-        let clay_cost = if clay >= blueprint.obsidian_bot_clay_cost {
-            0
-        } else {
-            blueprint.obsidian_bot_clay_cost - clay
-        };
-        let min_turns_for_enough_clay = clay_cost / clay_delta;
-        let min_turns_for_enough_clay = if clay_cost % clay_delta == 0 {
-            min_turns_for_enough_clay
-        } else {
-            min_turns_for_enough_clay + 1
-        };
-
-        let ore_cost = if ore >= blueprint.obsidian_bot_ore_cost {
-            0
-        } else {
-            blueprint.obsidian_bot_ore_cost - ore
-        };
-        let min_turns_for_enough_ore = ore_cost / ore_delta;
-        let min_turns_for_enough_ore = if ore_cost % ore_delta == 0 {
-            min_turns_for_enough_ore
-        } else {
-            min_turns_for_enough_ore + 1
-        };
-
-        let turns_to_make = min_turns_for_enough_clay.max(min_turns_for_enough_ore) + 1; // +1 to build
-        if time_remaining >= turns_to_make {
-            // and possibly turns_to_make + blueprint.geode_bot_obsidian_cost
-            // println!("*** ", clay, clay_delta, turns_to_make, blueprint.obsidian_bot_clay_cost);
-            let new_state = State {
-                time_remaining: time_remaining - turns_to_make,
-                obsidian_delta: obsidian_delta + 1,
-                ore: ore + ore_delta * turns_to_make - blueprint.obsidian_bot_ore_cost,
-                obsidian: obsidian + obsidian_delta * turns_to_make,
-                clay: clay + clay_delta * turns_to_make - blueprint.obsidian_bot_clay_cost,
-                geode: geode + geode_delta * turns_to_make,
-                ..state
+        // try to build each bot, preferring bots in the resource type order 
+        // (e.g. possible GeodeBot construction goes at end of the queue so it gets popped next round)
+        for rt in ResourceType::all().iter() {
+            // no need to build a bot that already is producing the max resources needed to produce a new bot
+            match *rt {
+                ResourceType::Geode => (),
+                _ => if deltas.at(rt) >= blueprint.maxes.at(rt) {
+                    continue;
+                }
             };
 
-            // println!("2 From {:?} to {:?} {}", state, new_state, best);
-            (maximize(new_state, &blueprint, memo), new_state)
-        } else {
-            (0, State::new())
-        }
-    } else {
-        (0, State::new())
-    };
-
-//     (an obsidian bot) was the best way to go from State { ore: 3, clay: 15, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 6, obsidian_delta: 0, geode_delta: 0, time_remaining: 20 } to State { ore: 2, clay: 7, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 6, obsidian_delta: 1, geode_delta: 0, time_remaining: 19 }
-// **** geode bot score: 0 to go to State { ore: 0, clay: 0, obsidian: 0, geode: 0, ore_delta: 1, clay_delta: 0, obsidian_delta: 0, geode_delta: 0, time_remaining: 24 }
-// **** obsidian bot score: 54 to go to State { ore: 2, clay: 7, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 6, obsidian_delta: 1, geode_delta: 0, time_remaining: 19 }
-// **** clay bot score: 0 to go to State { ore: 0, clay: 0, obsidian: 0, geode: 0, ore_delta: 1, clay_delta: 0, obsidian_delta: 0, geode_delta: 0, time_remaining: 24 }
-// **** ore bot score: 50 to go to State { ore: 3, clay: 27, obsidian: 0, geode: 0, ore_delta: 3, clay_delta: 6, obsidian_delta: 0, geode_delta: 0, time_remaining: 18 }
-
-    let (make_clay_bot, make_clay_state) = if clay_delta < blueprint.obsidian_bot_clay_cost
-    {
-        let cost = if ore >= blueprint.clay_bot_ore_cost {
-            0
-        } else {
-            blueprint.clay_bot_ore_cost - ore
-        };
-        let turns_to_make = cost / ore_delta + 1;
-        let turns_to_make_remainder = cost % ore_delta;
-        let turns_to_make = if turns_to_make_remainder != 0 {
-            turns_to_make + 1
-        } else {
-            turns_to_make
-        };
-
-        // there's some relation between clay we have, clay delta, and remaining turns
-        // such that adding a clay bot now changes how many future obsidian bots we can make
-        if time_remaining >= (turns_to_make + blueprint.obsidian_bot_clay_cost) {
-            let new_state = State {
-                time_remaining: time_remaining - turns_to_make,
-                clay_delta: clay_delta + 1,
-                ore: ore + ore_delta * turns_to_make - blueprint.clay_bot_ore_cost,
-                obsidian: obsidian + obsidian_delta * turns_to_make,
-                clay: clay + clay_delta * turns_to_make,
-                geode: geode + geode_delta * turns_to_make,
-                ..state
-            };
-
-            // println!("3 From {:?} to {:?} {}", state, new_state, best);
-            (maximize(new_state, &blueprint, memo), new_state)
-        } else {
-            (0, State::new())
-        }
-    } else {
-        (0, State::new())
-    };
-
-    let (make_ore_bot, make_ore_state) =
-        if ore < blueprint.max_ore_cost && ore_delta < blueprint.max_ore_cost {
-            let cost = if ore >= blueprint.ore_bot_ore_cost {
-                0
-            } else {
-                blueprint.ore_bot_ore_cost - ore
-            };
-            let turns_to_make = cost / ore_delta + 1;
-            let turns_to_make_remainder = cost % ore_delta;
-            let turns_to_make = if turns_to_make_remainder != 0 {
-                turns_to_make + 1
-            } else {
-                turns_to_make
-            };
-            if time_remaining >= turns_to_make {
-                let new_state = State {
-                    time_remaining: time_remaining - turns_to_make,
-                    ore_delta: ore_delta + 1,
-                    ore: ore + ore_delta * turns_to_make - blueprint.ore_bot_ore_cost,
-                    obsidian: obsidian + obsidian_delta * turns_to_make,
-                    clay: clay + clay_delta * turns_to_make,
-                    geode: geode + geode_delta * turns_to_make,
-                    ..state
-                };
-                // println!("4 From {:?} to {:?} {}", state, new_state, best);
-                (maximize(new_state, &blueprint, memo), new_state)
-            } else {
-                (0, State::new())
+            let costs = &blueprint.costs[usize::from(*rt)];
+            let mut time_to_build = 0usize;
+            for cost_type in ResourceType::all().iter() {
+                if costs.at(cost_type) > resources.at(cost_type) {
+                    if deltas.at(cost_type) == 0 { 
+                        time_to_build = 1000;
+                        break;
+                    }
+                    let needed = costs.at(cost_type) - resources.at(cost_type);
+                    let this_time = if needed % deltas.at(cost_type) == 0 { 
+                        needed / deltas.at(cost_type)
+                    } else {
+                        (needed / deltas.at(cost_type)) + 1
+                    };
+                    time_to_build = time_to_build.max(this_time);
+                }
             }
-        } else {
-            (0, State::new())
-        };
+            time_to_build += 1;
 
-    let best = *vec![
-        make_geode_bot,
-        make_obsidian_bot,
-        make_clay_bot,
-        make_ore_bot,
-    ]
-    .iter()
-    .max()
-    .unwrap();
-    let (the_best_thing_to_do, to_state) = if best == make_geode_bot {
-        ("a geode bot", make_geode_state)
-    } else if best == make_obsidian_bot {
-        ("an obsidian bot", make_obsidian_state)
-    } else if best == make_clay_bot {
-        ("a clay bot", make_clay_state)
-    } else if best == make_ore_bot {
-        ("an ore bot", make_ore_state)
-    } else {
-        ("", State::new())
-    };
-
-    // FROM HERE the paths diverge - counts obsidian bot and clay bot equally
-// (an obsidian bot) was the best way to go from State { ore: 3, clay: 10, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 5, obsidian_delta: 0, geode_delta: 0, time_remaining: 21 } to State { ore: 4, clay: 6, obsidian: 0, geode: 0, ore_delta: 2, clay_delta: 5, obsidian_delta: 1, geode_delta: 0, time_remaining: 19 }
-// 
-    println!(
-        "({}) was the best way to go from {:?} to {:?}",
-        the_best_thing_to_do, state, to_state
-    );
-    println!(
-        "**** geode bot score: {} to go to {:?}",
-        make_geode_bot, make_geode_state
-    );
-    println!(
-        "**** obsidian bot score: {} to go to {:?}",
-        make_obsidian_bot, make_obsidian_state
-    );
-    println!(
-        "**** clay bot score: {} to go to {:?}",
-        make_clay_bot, make_clay_state
-    );
-    println!(
-        "**** ore bot score: {} to go to {:?}",
-        make_ore_bot, make_ore_state
-    );
-    println!();
-    if best == 0 && geode_delta > 0 {
-        // println!("Visited a waiting for geodes node {:?}", state);
-        println!("best thing to do was wait it out");
-        geode + geode_delta * time_remaining
-    } else {
-        // println!("{}", the_best_thing_to_do);
-        memo.insert(state, best);
-        best
+            if time_to_build >= time_remaining {
+                // let it ride 
+                let this_max = resources.at(&ResourceType::Geode) + (deltas.at(&ResourceType::Geode) * time_remaining );
+                // PUshing new state ResourceVec([5, 63, 11, 47]) ResourceVec([2, 7, 6, 8]) 1
+                if this_max > current_max { 
+                    // println!("Setting new max! {} {}", this_max, current_max);
+                    current_max = this_max;
+                } else {
+                    // println!(" not better than previous max {} {} {:?}", this_max, current_max, rt);
+                }
+                // current_max = current_max.max(this_max);
+            } else { 
+                let mut new_resources = resources.clone();
+                for cost_type in ResourceType::all().iter() {
+                    new_resources.add(cost_type, deltas.at(cost_type) * time_to_build);
+                    new_resources.sub(cost_type, costs.at(cost_type));
+                }
+                let mut new_deltas = deltas.clone();
+                new_deltas.add(rt, 1);
+                // println!("PUshing new state {:?} {:?} {:?}", new_resources, new_deltas, time_remaining - time_to_build);
+                queue.push(State { resources: new_resources, deltas: new_deltas, time_remaining: time_remaining - time_to_build });
+            }
+        }
     }
 
-    // println!("Visited {}", best);
+    current_max
 }
 
-#[derive(PartialEq, Eq, Hash, Debug, Clone, Copy)]
+
+#[derive(Debug, Clone, Copy)]
+enum ResourceType {
+    Ore,
+    Clay,
+    Obsidian,
+    Geode
+}
+
+impl ResourceType {
+    fn all() -> Vec<ResourceType> { 
+        vec!(ResourceType::Ore, ResourceType::Clay, ResourceType:: Obsidian, ResourceType:: Geode)
+    }
+}
+impl From<ResourceType> for usize {
+    fn from(value: ResourceType) -> usize {
+        match value { 
+            ResourceType::Ore => 0,
+            ResourceType::Clay => 1,
+            ResourceType::Obsidian => 2,
+            ResourceType::Geode => 3,
+            _ => panic!("unknown resource type"),
+        }
+    }
+}
+
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
+struct ResourceVec(Vec<usize>);
+impl ResourceVec {
+    fn at(&self, index: &ResourceType) -> usize {
+        let Self(v) = self;
+        v[usize::from(*index)]
+    }
+
+    fn add(&mut self, index: &ResourceType, amount: usize) {
+        let Self(v) = self;
+        v[usize::from(*index)] += amount;
+    }
+
+    fn sub(&mut self, index: &ResourceType, amount: usize) {
+        let Self(v) = self;
+        v[usize::from(*index)] -= amount;
+    }
+}
+
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
 struct State {
-    ore: usize,
-    clay: usize,
-    obsidian: usize,
-    geode: usize,
-    ore_delta: usize,
-    clay_delta: usize,
-    obsidian_delta: usize,
-    geode_delta: usize,
+    resources: ResourceVec,
+    deltas: ResourceVec,
     time_remaining: usize,
 }
 
 impl State {
-    fn new() -> State {
-        State {
-            ore: 0,
-            clay: 0,
-            obsidian: 0,
-            geode: 0,
-            ore_delta: 1,
-            clay_delta: 0,
-            obsidian_delta: 0,
-            geode_delta: 0,
-            time_remaining: 24,
-        }
+    fn new(time_remaining: usize) -> State {
+        let resources = ResourceVec(vec![0; 4]);
+        let mut deltas_vec = vec![0; 3];
+        deltas_vec.insert(ResourceType::Ore.into(), 1);
+        let deltas = ResourceVec(deltas_vec);
+
+        State {resources, deltas, time_remaining}
     }
 }
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Blueprint {
-    ore_bot_ore_cost: usize,
-    clay_bot_ore_cost: usize,
-    obsidian_bot_ore_cost: usize,
-    obsidian_bot_clay_cost: usize,
-    geode_bot_ore_cost: usize,
-    geode_bot_obsidian_cost: usize,
-    max_ore_cost: usize,
-    min_ore_time: usize,
+    costs: Vec<ResourceVec>,
+    maxes: ResourceVec,
 }
 
 fn parse_input(input: &[String]) -> Vec<Blueprint> {
@@ -332,25 +197,19 @@ fn parse_input(input: &[String]) -> Vec<Blueprint> {
         .map(|input| {
             let mut parts = input.split_whitespace();
             let mut result = Blueprint {
-                ore_bot_ore_cost: parts.nth(6).unwrap().parse().unwrap(),
-                clay_bot_ore_cost: parts.nth(5).unwrap().parse().unwrap(),
-                obsidian_bot_ore_cost: parts.nth(5).unwrap().parse().unwrap(),
-                obsidian_bot_clay_cost: parts.nth(2).unwrap().parse().unwrap(),
-                geode_bot_ore_cost: parts.nth(5).unwrap().parse().unwrap(),
-                geode_bot_obsidian_cost: parts.nth(2).unwrap().parse().unwrap(),
-                max_ore_cost: 0,
-                min_ore_time: 0,
+                costs: vec!(
+                    ResourceVec(vec!(parts.nth(6).unwrap().parse().unwrap(), 0, 0, 0)),
+                    ResourceVec(vec!(parts.nth(5).unwrap().parse().unwrap(), 0, 0,0)),
+                    ResourceVec(vec!(parts.nth(5).unwrap().parse().unwrap(), parts.nth(2).unwrap().parse().unwrap(),0,0)),
+                    ResourceVec(vec!(parts.nth(5).unwrap().parse().unwrap(),0, parts.nth(2).unwrap().parse().unwrap(),0))
+                ),
+                maxes: ResourceVec(vec!()),
             };
-            result.max_ore_cost = result
-                .ore_bot_ore_cost
-                .max(result.clay_bot_ore_cost)
-                .max(result.obsidian_bot_ore_cost)
-                .max(result.geode_bot_ore_cost);
-            result.min_ore_time = result
-                .ore_bot_ore_cost
-                .min(result.clay_bot_ore_cost)
-                .min(result.obsidian_bot_ore_cost)
-                .min(result.geode_bot_ore_cost);
+            let mut max_v = vec!();
+            for rt in ResourceType::all().iter() {
+                max_v.push(result.costs.iter().map(|v| v.at(rt)).max().unwrap_or(0));
+            }
+            result.maxes = ResourceVec(max_v);
             result
         })
         .collect()
@@ -370,24 +229,26 @@ mod tests {
 
     fn example_parsed() -> Vec<Blueprint> {
         let blueprint1 = Blueprint {
-            ore_bot_ore_cost: 4,
-            clay_bot_ore_cost: 2,
-            obsidian_bot_ore_cost: 3,
-            obsidian_bot_clay_cost: 14,
-            geode_bot_ore_cost: 2,
-            geode_bot_obsidian_cost: 7,
-            max_ore_cost: 4,
-            min_ore_time: 2,
+            costs: vec!(
+                ResourceVec(vec!(4, 0, 0, 0)),
+                ResourceVec(vec!(2, 0, 0, 0)),
+                ResourceVec(vec!(3, 14, 0, 0)), 
+                ResourceVec(vec!(2, 0, 7, 0)),
+            ),
+            maxes: ResourceVec(vec!(
+                4, 14, 7, 0
+            )),
         };
         let blueprint2 = Blueprint {
-            ore_bot_ore_cost: 2,
-            clay_bot_ore_cost: 3,
-            obsidian_bot_ore_cost: 3,
-            obsidian_bot_clay_cost: 8,
-            geode_bot_ore_cost: 3,
-            geode_bot_obsidian_cost: 12,
-            max_ore_cost: 3,
-            min_ore_time: 2,
+            costs: vec!(
+                ResourceVec(vec!(2, 0, 0, 0)), 
+                ResourceVec(vec!(3, 0, 0, 0)),
+                ResourceVec(vec!(3, 8, 0, 0)),
+                ResourceVec(vec!(3, 0, 12, 0)),
+            ),
+            maxes: ResourceVec(vec!(
+                3, 8, 12, 0
+            )),
         };
         vec![blueprint1, blueprint2]
     }
@@ -400,12 +261,12 @@ mod tests {
         assert_eq!(parsed[1], example_parsed()[1]);
     }
 
-    // #[test]
-    // fn first_test() {
-    //     let input = example();
-    //     let result = first(&input);
-    //     assert_eq!(result, 33);
-    // }
+    #[test]
+    fn first_test() {
+        let input = example();
+        let result = first(&input);
+        assert_eq!(result, 33);
+    }
 
     #[test]
     fn second_test() {
