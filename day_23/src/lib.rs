@@ -1,13 +1,16 @@
 use std::collections::HashMap;
 
-pub fn first(input: &[String]) -> usize {
+pub fn first(input: &[String], max_rounds: usize) -> usize {
     let mut elves = parse_input(input);
-    println!("Starting position:");
-    elves.print();
+    // println!("Starting position:");
+    // elves.print();
     let consider_directions = ConsiderDirection::new();
     let mut consider_directions_index = 0;
 
-    while round(&mut elves, &consider_directions, &mut consider_directions_index) {}
+    let mut round_num = 0;
+    while round_num < max_rounds && round(&mut elves, &consider_directions, &mut consider_directions_index) {
+        round_num += 1;
+    }
     elves.empty_tiles()
 }
 
@@ -29,7 +32,7 @@ fn round(elves: &mut Elves, consider_directions: &Vec<ConsiderDirection>, consid
         
         // if an elf COULD move in any direction, it has no neighbors and thus won't move this round
         if can_move_directions.len() >= 4 {
-            println!("a guy found 4 directions to move!? {:?}", coord);
+            // println!("a guy found 4 directions to move!? {:?}", coord);
             continue;
         }
 
@@ -40,7 +43,8 @@ fn round(elves: &mut Elves, consider_directions: &Vec<ConsiderDirection>, consid
             proposals.push(elf.clone());
         }
     }
-    println!("Proposals: {:?}", proposals);
+    // println!("Proposals: {:?}", proposals);
+
     // part 2: move all proposals made by one and only one elf
     let mut anyone_moved = false;
     for (destination, proposing_elves) in proposals.iter() {
@@ -55,7 +59,7 @@ fn round(elves: &mut Elves, consider_directions: &Vec<ConsiderDirection>, consid
     }
 
     // part 3: print
-    elves.print();
+    // elves.print();
 
     // part 4: increment index
     *consider_index = (*consider_index + 1) % consider_directions.len();
@@ -121,7 +125,7 @@ impl Elves {
         let BoundingBox{min_x, min_y, max_x, max_y} = self.bounding_box(); 
         let x_span = max_x - min_x + 1; 
         let y_span = max_y - min_y + 1;
-        println!("Gonna calculate empty tiles! {} {} {}", x_span, y_span, self.elves().len());
+        // println!("Gonna calculate empty tiles! {} {} {}", x_span, y_span, self.elves().len());
         ((x_span * y_span) as usize) - self.elves().len()
     }
 }
@@ -158,7 +162,7 @@ impl ConsiderDirection {
             let neighboring_coord = elf.neighbor(d);
             
             let res = elves.elves().contains_key(&neighboring_coord);
-            println!("Check if there's a neighbor {:?} {:?} {} {:?} {:?}", elf.loc, neighboring_coord, res, d, self.out_direction);
+            // println!("Check if there's a neighbor {:?} {:?} {} {:?} {:?}", elf.loc, neighboring_coord, res, d, self.out_direction);
             res
         });
 
@@ -243,6 +247,19 @@ mod tests {
         elves.insert(Coord{x: 3, y: 4}, Elf{loc: Coord{x: 3, y: 4}});
         Elves(elves)
     }
+    
+    fn example_2() -> Vec<String> { 
+        let input: Vec<&str> = vec![
+            "....#..",
+            "..###.#",
+            "#...#.#",
+            ".#...##",
+            "#.###..",
+            "##.#.##",
+            ".#..#..",
+        ];
+        input.iter().map(|s: &&str| String::from(*s)).collect()
+    }
 
     #[test]
     fn test_round() { 
@@ -275,8 +292,12 @@ mod tests {
     #[test]
     fn first_test() {
         let input = example();
-        let result = first(&input);
+        let result = first(&input, 100);
         assert_eq!(result, 25);
+
+        let input = example_2();
+        let result = first(&input, 10); 
+        assert_eq!(result, 110)
     }
 
     #[test]
