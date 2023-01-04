@@ -15,7 +15,17 @@ pub fn first(input: &[String], max_rounds: usize) -> usize {
 }
 
 pub fn second(input: &[String]) -> usize {
-    0
+    let mut elves = parse_input(input);
+    // println!("Starting position:");
+    // elves.print();
+    let consider_directions = ConsiderDirection::new();
+    let mut consider_directions_index = 0;
+
+    let mut round_num = 0;
+    while round(&mut elves, &consider_directions, &mut consider_directions_index) {
+        round_num += 1;
+    }
+    round_num + 1
 }
 
 fn round(elves: &mut Elves, consider_directions: &Vec<ConsiderDirection>, consider_index: &mut usize) -> bool {
@@ -302,8 +312,8 @@ mod tests {
 
     #[test]
     fn second_test() {
-        let input = example();
+        let input = example_2();
         let result = second(&input);
-        assert_eq!(result, 0);
+        assert_eq!(result, 20);
     }
 }
