@@ -10,71 +10,112 @@ pub fn first(input: &[String], rows: usize, columns: usize) -> usize {
     //
 
     let mut tiles = Tiles::new(rows, columns, input);
-    let mut queue = vec!(State::new(&tiles));
+    let (start_row, start_column) = tiles.start_position();
+    let (end_row, end_column) = tiles.end_position();
+    let result = dfs(&mut tiles, start_row, start_column, end_row, end_column, 0);
+    // tiles.print();
+    result
+}
+
+pub fn second(input: &[String], rows: usize, columns: usize) -> usize {
+    let mut tiles = Tiles::new(rows, columns, input);
+    let (start_row, start_column) = tiles.start_position();
+    let (end_row, end_column) = tiles.end_position();
+    let start_to_end = dfs(&mut tiles, start_row, start_column, end_row, end_column, 0);
+    let end_to_start = dfs(
+        &mut tiles,
+        end_row,
+        end_column,
+        start_row,
+        start_column,
+        start_to_end,
+    );
+    let start_to_end_again = dfs(
+        &mut tiles,
+        start_row,
+        start_column,
+        end_row,
+        end_column,
+        start_to_end + end_to_start,
+    );
+    // tiles.print();
+    start_to_end + end_to_start + start_to_end_again
+}
+
+fn dfs(
+    tiles: &mut Tiles,
+    start_row: usize,
+    start_column: usize,
+    end_row: usize,
+    end_column: usize,
+    start_time: usize,
+) -> usize {
+    let mut queue = vec![State::new(start_row, start_column, start_time)];
     let mut min_time = 1_000;
-    let mut memo: HashSet<State> = HashSet::new(); 
-    while let Some(ref state @ State{row, column, time}) = queue.pop() {
+    let mut memo: HashSet<State> = HashSet::new();
+    while let Some(ref state @ State { row, column, time }) = queue.pop() {
         if memo.contains(state) {
             continue;
         }
         memo.insert(state.clone());
 
-        // println!("visiting state {:?}", state);
         if time >= min_time {
-            // println!("past current min time tick {} {}", time, min_time);
             continue;
         }
 
         // try the waiting state unless a blizzard would catch us
         if let TileState::Clear = tiles.at(time + 1, row as isize, column as isize) {
-            queue.push(State{row, column, time: time + 1});
+            queue.push(State {
+                row,
+                column,
+                time: time + 1,
+            });
         } else if let TileState::Start = tiles.at(time + 1, row as isize, column as isize) {
-            queue.push(State{row, column, time: time + 1});
+            queue.push(State {
+                row,
+                column,
+                time: time + 1,
+            });
+        } else if let TileState::End = tiles.at(time + 1, row as isize, column as isize) {
+            queue.push(State {
+                row,
+                column,
+                time: time + 1,
+            });
         }
 
         // try moving in each direction that is clear at this time
-        for direction in Direction::all().iter() { 
+        for direction in Direction::all().iter() {
             let new_row = (row as isize) + direction.to_delta().0;
             let new_column = (column as isize) + direction.to_delta().1;
-            
-            // println!("checking direction {:?} {} {}", direction, new_row, new_column);
+
             if let TileState::Clear = tiles.at(time + 1, new_row, new_column) {
-                // println!("going in direction");
-                let new_state = State{row: new_row as usize, column: new_column as usize, time: time + 1};
-                // println!("pushing new state {:?}", new_state);
+                let new_state = State {
+                    row: new_row as usize,
+                    column: new_column as usize,
+                    time: time + 1,
+                };
                 queue.push(new_state);
-            } else if let TileState::End = tiles.at(time + 1, new_row, new_column) {
-                // println!("next is the end!");
+            } else if new_row == (end_row as isize) && new_column == (end_column as isize) {
                 if (time + 1) < min_time {
-                    println!("visiting state {:?}", state);
-                    println!("checking direction {:?} {} {}", direction, new_row, new_column);
-                    println!("new min! {} {}", time + 1, min_time);
                     min_time = time + 1;
                 }
             }
         }
     }
 
-    tiles.print();
-
-    min_time
+    min_time - start_time
 }
-
-pub fn second(input: &[String]) -> usize {
-    0
-}
-
 #[derive(Debug, Eq, PartialEq, Hash, Clone)]
 struct State {
-    row: usize, 
+    row: usize,
     column: usize,
-    time: usize
+    time: usize,
 }
 
 impl State {
-    fn new(tiles: &Tiles) -> State {
-        let (row, column) = tiles.start_position();
-        State{row, column, time: 0}
+    fn new(row: usize, column: usize, time: usize) -> State {
+        State { row, column, time }
     }
 }
 
@@ -83,7 +124,7 @@ enum Direction {
     East,
     West,
     North,
-    South
+    South,
 }
 
 impl Direction {
@@ -97,13 +138,13 @@ impl Direction {
         }
     }
 
-    fn all() -> Vec<Direction> { 
-        vec!(
+    fn all() -> Vec<Direction> {
+        vec![
             Direction::North,
-            Direction::West, 
+            Direction::West,
             Direction::South,
-            Direction::East, 
-        )
+            Direction::East,
+        ]
     }
 
     fn opposite(&self) -> &Direction {
@@ -123,14 +164,14 @@ enum TileState {
     Start,
     End,
     Wall,
-    Blizzards(HashSet<Direction>)
+    Blizzards(HashSet<Direction>),
 }
 
 #[derive(Debug)]
 // indexed by time stamp (0 for initial state), row, column
-struct Tiles{
+struct Tiles {
     tiles: Vec<Vec<Vec<TileState>>>,
-    rows: usize, 
+    rows: usize,
     columns: usize,
 }
 
@@ -138,14 +179,14 @@ impl Tiles {
     fn new(rows: usize, columns: usize, input: &[String]) -> Tiles {
         let rows = rows + 2;
         let columns = columns + 2;
-        let mut tiles = vec!(vec![vec![TileState::NotCalculated; columns]; rows]);
-        for (row, line) in input.iter().enumerate() { 
+        let mut tiles = vec![vec![vec![TileState::NotCalculated; columns]; rows]];
+        for (row, line) in input.iter().enumerate() {
             for (column, c) in line.chars().enumerate() {
                 let tile_state = match c {
                     '#' => TileState::Wall,
                     '.' if row == 0 => TileState::Start,
                     '.' if (row + 1) == rows => TileState::End,
-                    '.'  => TileState::Clear,
+                    '.' => TileState::Clear,
                     '>' => TileState::Blizzards(HashSet::from([Direction::East])),
                     '^' => TileState::Blizzards(HashSet::from([Direction::North])),
                     'v' => TileState::Blizzards(HashSet::from([Direction::South])),
@@ -155,25 +196,29 @@ impl Tiles {
                 tiles[0][row][column] = tile_state;
             }
         }
-        Tiles{tiles, rows, columns}
+        Tiles {
+            tiles,
+            rows,
+            columns,
+        }
     }
 
     fn start_position(&self) -> (usize, usize) {
-        for (row, columns) in self.tiles[0].iter().enumerate() { 
-            for (column, state) in columns.iter().enumerate() { 
+        for (row, columns) in self.tiles[0].iter().enumerate() {
+            for (column, state) in columns.iter().enumerate() {
                 if let TileState::Start = state {
-                    return (row, column)
+                    return (row, column);
                 }
             }
         }
         (0, 0)
     }
-    
+
     fn end_position(&self) -> (usize, usize) {
-        for (row, columns) in self.tiles[0].iter().enumerate() { 
-            for (column, state) in columns.iter().enumerate() { 
+        for (row, columns) in self.tiles[0].iter().enumerate() {
+            for (column, state) in columns.iter().enumerate() {
                 if let TileState::End = state {
-                    return (row, column)
+                    return (row, column);
                 }
             }
         }
@@ -181,12 +226,11 @@ impl Tiles {
     }
 
     fn at(&mut self, time: usize, row: isize, column: isize) -> &TileState {
-        // println!("Checking at {} {} {} {}", row, column, self.rows, self.columns);
         if row < 0 || column < 0 {
             return &TileState::Wall;
         }
 
-        let row = row as usize; 
+        let row = row as usize;
         let column = column as usize;
 
         if row >= self.rows || column >= self.columns {
@@ -195,14 +239,16 @@ impl Tiles {
 
         if time >= self.tiles.len() {
             for _ in 0..=(time - self.tiles.len()) {
-                self.tiles.push(vec![vec![TileState::NotCalculated; self.columns]; self.rows]);
+                self.tiles.push(vec![
+                    vec![TileState::NotCalculated; self.columns];
+                    self.rows
+                ]);
             }
         }
         if let TileState::NotCalculated = self.tiles[time][row][column] {
             return self.calculate(time, row, column);
-        } 
+        }
 
-        // println!("returning {:?}", &self.tiles[time][row][column]);
         &self.tiles[time][row][column]
     }
 
@@ -216,21 +262,25 @@ impl Tiles {
             // otherwise, it's one of the field tiles in the middle.  We must find any blizzards that have moved into here.
             // If there's a blizzard here now, at the initial state it must have been at a point time units away from us,
             // in the neighborly direction, wrapping around walls.
-            // Must we calculate all 4 directions? no, since this step isn't used as the basis for later steps, we can 
+            // Must we calculate all 4 directions? no, since this step isn't used as the basis for later steps, we can
             // give up as soon as we find a blizzard.
-            _ =>  {
+            _ => {
                 let mut blizzards_here = HashSet::new();
                 for direction in Direction::all().iter() {
                     // what location is (time) units in the direction we're considering
                     // this calc is weird because we want to % within the walls - so #..>#; (col - 1) starting point, + delta, % (cols - 2 for the walls), then add back the 1 wall.
-                    let new_row = 1 + ((row as isize) - 1 + direction.to_delta().0 * (time as isize)).rem_euclid(self.rows as isize - 2);
-                    let new_column = 1 + ((column as isize) - 1 + direction.to_delta().1 * (time as isize)).rem_euclid(self.columns as isize - 2);
+                    let new_row = 1
+                        + ((row as isize) - 1 + direction.to_delta().0 * (time as isize))
+                            .rem_euclid(self.rows as isize - 2);
+                    let new_column = 1
+                        + ((column as isize) - 1 + direction.to_delta().1 * (time as isize))
+                            .rem_euclid(self.columns as isize - 2);
 
                     // is there a blizzard heading in the opposite direction at that location at time = 0?
-                    if let TileState::Blizzards(set) = &self.tiles[0][new_row as usize][new_column as usize] {
-                        // println!("found blizzards");
+                    if let TileState::Blizzards(set) =
+                        &self.tiles[0][new_row as usize][new_column as usize]
+                    {
                         if set.contains(direction.opposite()) {
-                            // println!("found opposite");
                             blizzards_here.insert(*direction.opposite());
                         }
                     }
@@ -241,7 +291,7 @@ impl Tiles {
                 } else {
                     TileState::Blizzards(blizzards_here)
                 }
-            },
+            }
         };
         self.tiles[time][row][column] = new_state;
         &self.tiles[time][row][column]
@@ -275,50 +325,48 @@ mod tests {
 
     fn example() -> Vec<String> {
         let input: Vec<&str> = vec![
-            "#.#####",
-            "#.....#",
-            "#>....#",
-            "#.....#",
-            "#...v.#",
-            "#.....#",
-            "#####.#",
+            "#.#####", "#.....#", "#>....#", "#.....#", "#...v.#", "#.....#", "#####.#",
         ];
         input.iter().map(|s: &&str| String::from(*s)).collect()
     }
 
-    fn example_2() -> Vec<String> { 
+    fn example_2() -> Vec<String> {
         let input: Vec<&str> = vec![
-            "#.######",
-            "#>>.<^<#",
-            "#.<..<<#",
-            "#>v.><>#",
-            "#<^v^^>#",
-            "######.#",
+            "#.######", "#>>.<^<#", "#.<..<<#", "#>v.><>#", "#<^v^^>#", "######.#",
         ];
         input.iter().map(|s: &&str| String::from(*s)).collect()
     }
 
     #[test]
     fn test_create() {
-        let input = example(); 
+        let input = example();
         let mut tiles = Tiles::new(5, 5, &input);
         assert_eq!(*tiles.at(0, 0, 1), TileState::Start);
         assert_eq!(*tiles.at(0, 6, 5), TileState::End);
         assert_eq!(*tiles.at(0, 1, 1), TileState::Clear);
-        assert_eq!(*tiles.at(0, 2, 1), TileState::Blizzards(HashSet::from([Direction::East])));
+        assert_eq!(
+            *tiles.at(0, 2, 1),
+            TileState::Blizzards(HashSet::from([Direction::East]))
+        );
     }
 
     #[test]
-    fn test_calculate() { 
-        let input = example(); 
+    fn test_calculate() {
+        let input = example();
         let mut tiles = Tiles::new(5, 5, &input);
         assert_eq!(*tiles.at(1, 2, 1), TileState::Clear);
-        assert_eq!(*tiles.at(1, 2, 2), TileState::Blizzards(HashSet::from([Direction::East])));
+        assert_eq!(
+            *tiles.at(1, 2, 2),
+            TileState::Blizzards(HashSet::from([Direction::East]))
+        );
 
         // visiting state State { row: 2, column: 2, time: 10 } seems to be a tricky entry
         let input = example_2();
         let mut tiles = Tiles::new(4, 6, &input);
-        assert_eq!(*tiles.at(10, 2, 2), TileState::Blizzards(HashSet::from([Direction::West, Direction::North])));
+        assert_eq!(
+            *tiles.at(10, 2, 2),
+            TileState::Blizzards(HashSet::from([Direction::West, Direction::North]))
+        );
     }
 
     #[test]
@@ -334,8 +382,8 @@ mod tests {
 
     #[test]
     fn second_test() {
-        let input = example();
-        let result = second(&input);
-        assert_eq!(result, 0);
+        let input = example_2();
+        let result = second(&input, 4, 6);
+        assert_eq!(result, 54);
     }
 }

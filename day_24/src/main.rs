@@ -6,6 +6,6 @@ fn main() -> Result<(), Error> {
     println!("Using puzzle input {:?}", input);
 
     println!("First output: {}", first(&input, 20, 150)); // 257, 335 is too low 343 is right!
-    println!("Second output: {}", second(&input)); 
+    println!("Second output: {}", second(&input, 20, 150));
     Ok(())
 }
